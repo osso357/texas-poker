@@ -1,4 +1,4 @@
-package com.tplab.serverside;
+package server;
 
 public class PlayerException extends Exception
 {
