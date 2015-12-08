@@ -14,15 +14,16 @@ public class Table
 
 	public int PlayersNumber, Chips, SmallBlind, BigBlind;
 	public List<Player> PlayersList;
+	private Deck deck;
+	ServerSocket serverSocket = null;
 	
-	public void initialize()
+	public boolean initialize()
 	{
-		ServerSocket serverSocket = null;
 		PlayersList = new ArrayList<Player>();
 		
 		try
 		{
-			serverSocket = new ServerSocket(65023);
+			serverSocket = new ServerSocket(65025);
 		}
 		catch (IOException e)
 		{
@@ -43,6 +44,7 @@ public class Table
 				}
 				catch(PlayerException e)
 				{
+					System.out.println(e.getMessage());
 					continue;
 				}
 				PlayersList.add(player);
@@ -61,7 +63,32 @@ public class Table
 			catch (IOException e)
 			{
 				e.printStackTrace();
+				return false;
 			} 
+		}
+		
+		return true;
+	}
+	
+	public void startGame()
+	{
+		deck = new Deck();
+		
+		int dealerButtonPlayer = (int)(Math.floor(Math.random()*PlayersList.size()));
+		
+		PlayersList.get(dealerButtonPlayer).dealerButton = true;
+		
+		for(Player player : PlayersList)
+		{
+			player.Chips = Chips;
+			String initialMessage;
+			initialMessage = "START";
+			for(int i = (PlayersList.indexOf(player) + 1)%PlayersList.size(); i !=  PlayersList.indexOf(player); i++)
+			{
+				initialMessage += ":" + PlayersList.get(i).nick;
+				if(i >= PlayersList.size()) i = 0;
+			}
+			//player.out.println(initialMessage);
 		}
 		
 		
@@ -69,10 +96,9 @@ public class Table
 	
 	public static void main(String[] args)
 	{
-		Table s = null;
+		Table s = new Table();
 		if(args.length == 4)
 		{ 
-			s = new Table();
 			try
 			{
 				s.PlayersNumber = Integer.parseInt(args[0]);
@@ -100,11 +126,18 @@ public class Table
 		}
 		else
 		{
-			System.out.println("Niepoprawa ilosc argumentow");
-			return;
+			/* Domyslne parametry wejsciowe */
+			
+			s.PlayersNumber = 4;
+			
+			s.Chips = 5000;
+			
+			s.SmallBlind = 200;
+			
+			s.BigBlind = 400;
 		}
 		
-		s.initialize();
+		if(s.initialize()) s.startGame();
 	}
 
 }

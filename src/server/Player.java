@@ -14,6 +14,8 @@ public class Player
 	public Table server;
 	public String nick;
 	public int Chips;
+	public boolean dealerButton; 
+	
 	
 	public Player(Table server, Socket socket) throws PlayerException
 	{
@@ -24,13 +26,13 @@ public class Player
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 			String msg = in.readLine();
-			System.out.println(msg);
+			//System.out.println(msg);
 			if(msg != null && msg.contains("S:0:"))
 			{
 				this.nick = msg.split(":")[2];
 				out = new PrintWriter(socket.getOutputStream());
-				out.println("W lobby znajduje sie " + server.PlayersList.size() + " na " + server.PlayersNumber + " graczy");
-				System.out.println("W lobby znajduje sie " + server.PlayersList.size() + " na " + server.PlayersNumber + " graczy");
+				out.println("W lobby znajduje sie " + (server.PlayersList.size() + 1) + " na " + server.PlayersNumber + " graczy");
+				System.out.println("W lobby znajduje sie " + (server.PlayersList.size() + 1) + " na " + server.PlayersNumber + " graczy");
 			}
 			else throw new PlayerException("Fake connection");
 			
