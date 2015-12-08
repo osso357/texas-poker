@@ -3,6 +3,8 @@ package klient;
 
 public class Game {
 	
+	
+	
 	public Game() {
 		
 	}

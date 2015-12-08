@@ -16,6 +16,6 @@ public class Card {
 	
 	public int getStrenght()
 	{
-		return value - getSuite()*4;
+		return value - getSuite()*13;
 	}
 }
