@@ -10,8 +10,9 @@ public class Client{
 	ConnectorWindow connector;
 	WindowActions listener;
 	WaitWindow ww;
-	GameWindow game;
+	GameWindow gamewin;
 	ServerListener slistener;
+	Game game; 
 	
 	public static void main(String[] args){
 		new Client();
@@ -20,6 +21,7 @@ public class Client{
 	public Client()	{
 		listener = new WindowActions(this);
 		connector = new ConnectorWindow(this, listener);
+		game = new Game();
 	}
 	
 	protected void connect()
@@ -27,10 +29,10 @@ public class Client{
 		connector.setVisible(false);
 		ww = new WaitWindow();
 		ww.addWindowListener(listener);
-		//game = new GameWindow();
+		//gamewin = new GameWindow();
 		try
 		{
-		slistener = new ServerListener(connector.adres.getText(), Integer.parseInt(connector.port.getText()));
+		slistener = new ServerListener(connector.adres.getText(), Integer.parseInt(connector.port.getText()), game);
 		slistener.start();
 		slistener.write("S:0:" + connector.imie.getText());
 	}

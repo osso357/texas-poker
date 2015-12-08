@@ -12,12 +12,14 @@ class ServerListener extends Thread{
 	String mes;
 	String[] mtable;
 	int changed;
-
-	ServerListener(String host, int port) throws IOException, UnknownHostException{
+	Game game;
+	
+	ServerListener(String host, int port, Game texas) throws IOException, UnknownHostException{
 		socket = new Socket(host, port);
 		out = new PrintWriter(socket.getOutputStream(), true);
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		changed = 0;
+		game = texas;
 	}
 	
 	public void run()
@@ -29,9 +31,15 @@ class ServerListener extends Thread{
 			mes = in.readLine();
 			System.out.println(mes);
 			
-			/*mtable = mes.split(":");
+			mtable = mes.split(":");
 			
 			if (mtable[0].equals("S"))
+			{
+			System.out.println("START!");
+
+			}
+			
+			/*if (mtable[0].equals("S"))
 				{
 				System.out.println("START!");
 
