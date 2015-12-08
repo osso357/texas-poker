@@ -29,7 +29,7 @@ class ServerListener extends Thread{
 			mes = in.readLine();
 			System.out.println(mes);
 			
-			mtable = mes.split(":");
+			/*mtable = mes.split(":");
 			
 			if (mtable[0].equals("S"))
 				{
@@ -70,7 +70,7 @@ class ServerListener extends Thread{
 			else
 				{
 					System.out.println("error");
-				}
+				}*/
 			}
 		}
 		catch  (IOException e) {

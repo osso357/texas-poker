@@ -11,10 +11,14 @@ public class WaitWindow extends JFrame {
 	super("Texas Hold'em");
 	setFont(new Font(Font.SANS_SERIF,Font.PLAIN,40));
     setLayout(new FlowLayout(FlowLayout.CENTER));
-	message = new JLabel("Oczekiwanie na innych graczy...");
+	message = new JLabel("Oczekiwanie na połączenie...");
 	add(message);
 	setSize(400,70);
 	setLocationRelativeTo(null);
 	setVisible(true);
+	}
+	
+	public void setMessage(String text) {
+		message.setText(text);
 	}
 }

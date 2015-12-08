@@ -27,12 +27,12 @@ public class Client{
 		connector.setVisible(false);
 		ww = new WaitWindow();
 		ww.addWindowListener(listener);
-		game = new GameWindow();
+		//game = new GameWindow();
 		try
 		{
-		slistener = new ServerListener("172.16.53.180", 65023);
+		slistener = new ServerListener(connector.adres.getText(), Integer.parseInt(connector.port.getText()));
 		slistener.start();
-		slistener.write("S:0:adam");
+		slistener.write("S:0:" + connector.imie.getText());
 	}
 	catch (UnknownHostException e) {
 		System.out.println("Unknown host");
