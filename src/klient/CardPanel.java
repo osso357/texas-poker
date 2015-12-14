@@ -70,7 +70,6 @@ public class CardPanel extends JPanel{
     }
 	
 	private String Strenght2String(int strenght) {
-		System.out.println("int: " + strenght);
 		String strstrenght = "";
 		if (strenght <= 8)
 		{
@@ -88,7 +87,6 @@ public class CardPanel extends JPanel{
 		else if (strenght == 12) {
 			strstrenght = "A";
 		}
-		System.out.println("str: " + strstrenght);
 		return strstrenght;
 	}
 }
