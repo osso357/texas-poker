@@ -1,16 +1,22 @@
 package klient;
 
-import java.awt.Color;
-
 import javax.swing.*;
 
 public class GameWindow extends JFrame{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5950203353318858088L;
 	CardPanel cards;
+	PlayersPanel players;
+	Game game;
 	
-	public GameWindow() {
+	public GameWindow(Game currentGame) {
 		super("Texas Hold'em");
-		cards = new CardPanel();
+		players = new PlayersPanel(currentGame);
+		add(players);
+		cards = new CardPanel(currentGame);
 		add(cards);
 		setSize(600, 300);
 		setVisible(true);

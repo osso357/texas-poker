@@ -11,20 +11,18 @@ public class CardPanel extends JPanel{
 
 	Border blackline;
 	TitledBorder border;
+	Game game;
 	
-	public CardPanel() {
+	public CardPanel(Game currentGame) {
 		setSize(700, 250);
 		blackline = BorderFactory.createLineBorder(Color.black);
 		border = BorderFactory.createTitledBorder("KARTY");
 		setBorder(border);
 		border.setTitleJustification(TitledBorder.LEFT);
+		game = currentGame;
 	}
 	
-	public void addCart(int cardnumber) {
-		//implement
-	}
-	
-	public void removeCards() {
+	public void update() {
 		//implement
 	}
 	
@@ -32,7 +30,12 @@ public class CardPanel extends JPanel{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         g.setColor(Color.WHITE);
-        g.fillRoundRect(10, 20, 120, 160, 20, 20);
-        g.fillRoundRect(160, 20, 120, 160, 20, 20);
+        for (int i = 0; i < 7; i++) {
+			if(game.Cards[i] == null) {
+		        g.fillRoundRect(10 + 100*i, 20, 90+100*i, 120, 20, 20);
+
+			}
+		}
+//        g.fillRoundRect(160, 20, 120, 160, 20, 20);
     }
 }

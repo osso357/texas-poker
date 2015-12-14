@@ -7,10 +7,10 @@ import org.junit.Test;
 public class GameTest {
 
 	@Test
-	public void testPlayeAadd() {
+	public void testPlayeAdd() {
 		Game game = new Game();
-		
-		//assertEquals(card.getSuite(), 3);
+		game.addPlayer("Adam", 500);
+		assertEquals(game.Players.get(0).getName(), "Adam");
 	}
 	
 }
