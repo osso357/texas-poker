@@ -19,7 +19,6 @@ public class PlayersPanel extends JPanel{
 	JLabel[] kredyty;
 	
 	public PlayersPanel(Game currentGame) {
-		setSize(700, 250);
 		blackline = BorderFactory.createLineBorder(Color.black);
 		border = BorderFactory.createTitledBorder("GRACZE");
 		setBorder(border);
