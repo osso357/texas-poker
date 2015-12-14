@@ -27,6 +27,7 @@ public class Game {
 	
 	public void addCart(int card) {
 		Cards[cardscounter] = new Card(card);
+		cardscounter++;
 	}
 	
 	public int countPlayers() {

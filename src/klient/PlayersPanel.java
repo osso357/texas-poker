@@ -6,9 +6,12 @@ import javax.swing.border.TitledBorder;
 
 import java.awt.*;
 
-@SuppressWarnings("serial")
 public class PlayersPanel extends JPanel{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4386654832069104896L;
 	Border blackline;
 	TitledBorder border;
 	Game game;
@@ -18,7 +21,7 @@ public class PlayersPanel extends JPanel{
 	public PlayersPanel(Game currentGame) {
 		setSize(700, 250);
 		blackline = BorderFactory.createLineBorder(Color.black);
-		border = BorderFactory.createTitledBorder("Gracze");
+		border = BorderFactory.createTitledBorder("GRACZE");
 		setBorder(border);
 		border.setTitleJustification(TitledBorder.LEFT);
 		game = currentGame;

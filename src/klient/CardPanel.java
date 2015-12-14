@@ -14,7 +14,7 @@ public class CardPanel extends JPanel{
 	Game game;
 	
 	public CardPanel(Game currentGame) {
-		setSize(700, 250);
+		setPreferredSize(new Dimension(700,200));
 		blackline = BorderFactory.createLineBorder(Color.black);
 		border = BorderFactory.createTitledBorder("KARTY");
 		setBorder(border);
@@ -31,9 +31,8 @@ public class CardPanel extends JPanel{
         super.paintComponent(g);
         g.setColor(Color.WHITE);
         for (int i = 0; i < 7; i++) {
-			if(game.Cards[i] == null) {
-		        g.fillRoundRect(10 + 100*i, 20, 90+100*i, 120, 20, 20);
-
+			if(game.Cards[i] != null) {
+		        g.fillRoundRect(10 + 100*i, 20, 80, 120, 20, 20);
 			}
 		}
 //        g.fillRoundRect(160, 20, 120, 160, 20, 20);

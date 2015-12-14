@@ -13,13 +13,14 @@ public class GameWindow extends JFrame{
 	Game game;
 	
 	public GameWindow(Game currentGame) {
-		super("Texas Hold'em");
+		setTitle("Texas Hold'em");
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		players = new PlayersPanel(currentGame);
 		add(players);
 		cards = new CardPanel(currentGame);
 		add(cards);
-		setSize(700, 500);
-		//pack();
+		//setSize(700, 500);
+		pack();
 		setVisible(true);
 	}
 }
