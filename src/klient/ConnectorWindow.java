@@ -27,6 +27,7 @@ public class ConnectorWindow extends JFrame {
 	Ladres = new JLabel();
 	Lport = new JLabel();
 	wyslij = new JButton("wyslij");
+	wyslij.setActionCommand("connect");
 	
 	Lport.setText(" port:");
 	Ladres.setText(" adres:");

@@ -3,7 +3,7 @@ package klient;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-public class ClientTester extends Client{
+public class ClientTester extends Client {
 
 	WindowActions listener;
 	GameWindow gamewin;

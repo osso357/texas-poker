@@ -10,6 +10,7 @@ public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 5950203353318858088L;
 	CardPanel cards;
 	PlayersPanel players;
+	MessagePanel messages;
 	Game game;
 	
 	public GameWindow(Game currentGame) {
@@ -19,7 +20,8 @@ public class GameWindow extends JFrame{
 		add(players);
 		cards = new CardPanel(currentGame);
 		add(cards);
-		//setSize(700, 500);
+		messages = new MessagePanel();
+		add(messages);
 		pack();
 		setVisible(true);
 	}
