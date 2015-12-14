@@ -18,12 +18,16 @@ public class MessagePanel extends JPanel{
 
 	public MessagePanel() {
 		blackline = BorderFactory.createLineBorder(Color.black);
-		border = BorderFactory.createTitledBorder("Wiadomość");
+		border = BorderFactory.createTitledBorder("WIADOMOŚĆ");
 		setBorder(border);
 		border.setTitleJustification(TitledBorder.LEFT);
 		message = new JLabel("No message yet. Waiting for something probably...");
 		add(message);
 		setVisible(true);
+	}
+	
+	public void changeMessage(String newMessage) {
+		message.setText(newMessage);
 	}
 
 }

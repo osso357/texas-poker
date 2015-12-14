@@ -23,6 +23,9 @@ public class GameWindow extends JFrame{
 		messages = new MessagePanel();
 		add(messages);
 		pack();
+		setLocationRelativeTo(null);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 }

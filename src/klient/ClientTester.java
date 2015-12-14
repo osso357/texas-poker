@@ -14,13 +14,14 @@ public class ClientTester extends Client {
 		game = new Game();
 		game.addPlayer("Adam", 500);
 		game.addPlayer("Ewa", 500);
+		game.addPlayer("Kamil", 500);
+		game.addCart(2);
+		game.addCart(43);
+		game.addCart(11);
 		game.addCart(23);
 		game.addCart(48);
-		game.addCart(10);
-		game.addCart(23);
-		game.addCart(48);
-		game.addCart(10);
-		game.addCart(10);
+		game.addCart(21);
+		game.addCart(36);
 		gamewin = new GameWindow(game);
 	}
 

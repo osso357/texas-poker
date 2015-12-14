@@ -8,6 +8,11 @@ import javax.swing.*;
 
 public class ConnectorWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5513393657278825789L;
+
 	Client client = null;
 	
 	JTextField adres,port,imie;

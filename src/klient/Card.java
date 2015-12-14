@@ -11,11 +11,11 @@ public class Card {
 	
 	public int getSuite()
 	{
-		return value % 4;
+		return value / 13 ;
 	}
 	
 	public int getStrenght()
 	{
-		return value - getSuite()*13;
+		return value % 13;
 	}
 }
