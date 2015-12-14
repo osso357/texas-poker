@@ -18,7 +18,8 @@ public class GameWindow extends JFrame{
 		add(players);
 		cards = new CardPanel(currentGame);
 		add(cards);
-		setSize(600, 300);
+		setSize(700, 500);
+		//pack();
 		setVisible(true);
 	}
 }
