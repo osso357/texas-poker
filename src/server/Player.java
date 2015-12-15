@@ -14,8 +14,21 @@ public class Player
 	public Table server;
 	public String nick;
 	public int Chips;
-	public boolean dealerButton; 
+	public boolean dealerButton;
+	public Hand hand;
+	public int bid;
 	
+	public void drawCards(Deck deck)
+	{
+		try
+		{
+			hand = new Hand(deck.getFromTop(), deck.getFromTop());
+		}
+		catch(CardsException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	public Player(Table server, Socket socket) throws PlayerException
 	{

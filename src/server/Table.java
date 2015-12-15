@@ -73,24 +73,41 @@ public class Table
 	public void startGame()
 	{
 		deck = new Deck();
+
+		int dealerButtonIndex = (int)(Math.floor(Math.random()*PlayersList.size()));
+		Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
 		
-		int dealerButtonPlayer = (int)(Math.floor(Math.random()*PlayersList.size()));
-		
-		PlayersList.get(dealerButtonPlayer).dealerButton = true;
+		dealerButtonPlayer.dealerButton = true;
 		
 		for(Player player : PlayersList)
 		{
 			player.Chips = Chips;
 			String initialMessage;
-			initialMessage = "START";
-			for(int i = (PlayersList.indexOf(player) + 1)%PlayersList.size(); i !=  PlayersList.indexOf(player); i++)
+			initialMessage = "S";
+			for(int i = 0; i < PlayersList.size() - 1; i++)
 			{
-				initialMessage += ":" + PlayersList.get(i).nick;
-				if(i >= PlayersList.size()) i = 0;
+				initialMessage += ":" + PlayersList.get((PlayersList.indexOf(player)+i)%PlayersList.size()).nick;
 			}
-			//player.out.println(initialMessage);
+			player.out.println(initialMessage);
+			
+			System.out.println("Wysylam do gracza "+ player.nick +": " + initialMessage);
 		}
 		
+		
+		while(PlayersList.size() > 1)
+		{
+			List<Card> tableCards = new ArrayList<Card>();
+			
+			PlayersList.get((dealerButtonIndex + 1 >= PlayersList.size()) ? dealerButtonIndex + 1 : 0).bid = SmallBlind;
+			PlayersList.get((dealerButtonIndex + 2 >= PlayersList.size()) ? dealerButtonIndex + 2 : 0).bid = BigBlind;
+			
+			deck.shuffleDeck();
+			
+			for(Player player : PlayersList)
+			{
+				player.drawCards(deck);
+			}
+		}
 		
 	}
 	
@@ -138,6 +155,13 @@ public class Table
 		}
 		
 		if(s.initialize()) s.startGame();
+		
+		try {
+			s.serverSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
