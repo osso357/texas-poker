@@ -1,9 +1,6 @@
 package server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -11,10 +8,10 @@ import java.util.List;
 
 public class Table
 {
-
 	public int PlayersNumber, Chips, SmallBlind, BigBlind;
 	public List<Player> PlayersList;
 	private Deck deck;
+
 	ServerSocket serverSocket = null;
 	
 	public boolean initialize()
@@ -32,39 +29,31 @@ public class Table
 		
 		while(PlayersList.size() < PlayersNumber)
 		{
+			PlayerConnector playerConnector = new PlayerConnector();
 			try
 			{
-				Socket newConnection = serverSocket.accept();
-				Player player;
-				//PrintWriter out = new PrintWriter(newConnection.getOutputStream());
-				//BufferedReader in = new BufferedReader(new InputStreamReader(newConnection.getInputStream()));
-				try
-				{
-					player = new Player(this, newConnection);
-				}
-				catch(PlayerException e)
-				{
-					System.out.println(e.getMessage());
-					continue;
-				}
-				PlayersList.add(player);
-				System.out.println("Dolaczyl gracz, nick: " + player.nick + ",IP: " + newConnection.getInetAddress());
-				
-				for(Player connectedPlayer : PlayersList)
-				{
-					if(!connectedPlayer.playerSocket.isConnected())
-					{
-						System.out.println("Gracz " + connectedPlayer.nick + " odszedl");
-						PlayersList.remove(connectedPlayer);
-					}
-				}
-				
+				playerConnector.initializeSocket(serverSocket);
 			}
 			catch (IOException e)
 			{
 				e.printStackTrace();
-				return false;
-			} 
+				continue;
+			}
+			
+			Player player = new Player(playerConnector);
+			
+			PlayersList.add(player);
+			player.setNick();
+			System.out.println("Dolaczyl gracz, nick: " + player.getNick());
+			
+			/*for(Player connectedPlayer : PlayersList)
+			{
+				if(!connectedPlayer.isConnected())
+				{
+					System.out.println("Gracz " + connectedPlayer.getNick() + " odszedl");
+					PlayersList.remove(connectedPlayer);
+				}
+			}*/
 		}
 		
 		return true;
@@ -77,24 +66,32 @@ public class Table
 		int dealerButtonIndex = (int)(Math.floor(Math.random()*PlayersList.size()));
 		Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
 		
-		dealerButtonPlayer.dealerButton = true;
+		//dealerButtonPlayer.dealerButton = true;
 		
 		for(Player player : PlayersList)
 		{
-			player.Chips = Chips;
+			player.setChips(Chips);
 			String initialMessage;
 			initialMessage = "S";
-			for(int i = 0; i < PlayersList.size() - 1; i++)
+			for(int i = 0; i < PlayersList.size(); i++)
 			{
-				initialMessage += ":" + PlayersList.get((PlayersList.indexOf(player)+i)%PlayersList.size()).nick;
+				initialMessage += ":" + PlayersList.get(i).getNick();
+				initialMessage += ":" + PlayersList.get(i).getChips();
 			}
-			player.out.println(initialMessage);
+			player.playerConnector.playerOutputStream.println(initialMessage);
 			
-			System.out.println("Wysylam do gracza "+ player.nick +": " + initialMessage);
+			System.out.println("Wysylam do gracza "+ player.getNick() +": " + initialMessage);
+			
+			try {
+				System.out.println(player.playerConnector.playerInputStream.readLine());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		
-		while(PlayersList.size() > 1)
+	/*	while(PlayersList.size() > 1)
 		{
 			List<Card> tableCards = new ArrayList<Card>();
 			
@@ -107,7 +104,8 @@ public class Table
 			{
 				player.drawCards(deck);
 			}
-		}
+		}*/
+		while(true);
 		
 	}
 	
@@ -144,24 +142,19 @@ public class Table
 		else
 		{
 			/* Domyslne parametry wejsciowe */
-			
-			s.PlayersNumber = 4;
-			
+			s.PlayersNumber = 2;
 			s.Chips = 5000;
-			
 			s.SmallBlind = 200;
-			
 			s.BigBlind = 400;
 		}
 		
 		if(s.initialize()) s.startGame();
 		
 		try {
-			s.serverSocket.close();
-		} catch (IOException e) {
+			if(!s.serverSocket.isClosed()) s.serverSocket.close();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 }

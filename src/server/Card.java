@@ -1,15 +1,26 @@
 package server;
 
+
 public class Card
 {
-	public int value;
-	public int color;
-	private final String[] colorNames = {"Spades", "Clubs", "Hearths", "Diamonds"};
-	private final String[] cardNames = {"Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace"};
+	private final int value;
+	private final int color;
 	
-	public String getCardDescription()
+	public int getValue()
 	{
-		return cardNames[value] + " of " + colorNames[color];
+		return value;
+	}
+	
+	public int getColor()
+	{
+		return color;
+	}
+	
+	public int CompareTo(Card card)
+	{
+		if(this.value > card.getValue()) return 1;
+		else if(this.value == card.getValue()) return 0;
+		else return -1;
 	}
 	
 	public Card(final int value, final int color)
