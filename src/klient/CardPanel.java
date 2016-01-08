@@ -37,17 +37,17 @@ public class CardPanel extends JPanel{
 	}
 	
 	public void update() {
-		//implement
+		repaint();
 	}
 	
 	@Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         for (int i = 0; i < 7; i++) {
-			if(game.Cards[i] != null) {
+			if(game.cards[i] != null) {
 				g.setColor(Color.WHITE);
 		        g.fillRoundRect(10 + 100*i, 20, 80, 120, 20, 20);
-		        int suite = game.Cards[i].getSuite();
+		        int suite = game.cards[i].getSuite();
 		        if (suite == 0){
 		        	g.drawImage(spade, 27 + 100*i, 30, null);
 		        }
@@ -61,15 +61,15 @@ public class CardPanel extends JPanel{
 		        	g.drawImage(club, 27 + 100*i, 30, null);
 		        }
 		        else {
-		        	//error, KURWA!
+		        	//error
 		        }
 		        g.setColor(Color.BLACK);
-		        g.drawString(Strenght2String(game.Cards[i].getStrenght()), 33 + 100*i, 110);
+		        g.drawString(strenght2String(game.cards[i].getStrenght()), 33 + 100*i, 110);
 			}
 		}
     }
 	
-	private String Strenght2String(int strenght) {
+	private String strenght2String(final int strenght) { // NOPMD by fryzjer on 1/5/16 5:38 PM
 		String strstrenght = "";
 		if (strenght <= 8)
 		{

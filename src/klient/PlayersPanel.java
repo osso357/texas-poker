@@ -17,6 +17,7 @@ public class PlayersPanel extends JPanel{
 	Game game;
 	JLabel[] imiona;
 	JLabel[] kredyty;
+	JLabel[] zaklad;
 	
 	public PlayersPanel(Game currentGame) {
 		blackline = BorderFactory.createLineBorder(Color.black);
@@ -26,18 +27,28 @@ public class PlayersPanel extends JPanel{
 		game = currentGame;
 		imiona = new JLabel[game.countPlayers()];
 		kredyty = new JLabel[game.countPlayers()];
-		setLayout(new GridLayout(game.countPlayers(),2));
+		zaklad = new JLabel[game.countPlayers()];
+		setLayout(new GridLayout(game.countPlayers(),3));
 		for (int i = 0; i < game.countPlayers(); i++) {
-			imiona[i] = new JLabel(game.Players.get(i).getName());
+			imiona[i] = new JLabel(game.players.get(i).getName());
 			add(imiona[i]);
-			kredyty[i] = new JLabel(Integer.toString(game.Players.get(i).getCredits()));
+			kredyty[i] = new JLabel(Integer.toString(game.players.get(i).getCredits()));
 			add(kredyty[i]);
+			zaklad[i] = new JLabel(Integer.toString(game.players.get(i).getBet()));
+			add(zaklad[i]);	
 		}
 		setVisible(true);
 	}
 	
 	public void update() {
-		//TODO: implement
+		imiona = new JLabel[game.countPlayers()];
+		kredyty = new JLabel[game.countPlayers()];
+		for (int i = 0; i < game.countPlayers(); i++) {
+			imiona[i] = new JLabel(game.players.get(i).getName());
+			add(imiona[i]);
+			kredyty[i] = new JLabel(Integer.toString(game.players.get(i).getBet()));
+			add(kredyty[i]);
+		}
 	}
     
 }

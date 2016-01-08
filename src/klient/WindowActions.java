@@ -12,8 +12,10 @@ public class WindowActions extends WindowAdapter implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		client.connect();
-		
+		if(e.getActionCommand() == "connect")
+		{
+			client.connect();
+		}
 	}
 	
 	public WindowActions(Client client) {

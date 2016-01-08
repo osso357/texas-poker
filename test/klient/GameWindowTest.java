@@ -11,8 +11,9 @@ public class GameWindowTest {
 		Game game = new Game();
 		game.addPlayer("Adam", 500);
 		game.addPlayer("Ewa", 500);
-		GameWindow window = new GameWindow(game);
-		//assertEquals(game.Players.get(0).getName(), "Adam");
+		GameWindow window = GameWindow.getInstance(game);
+		window = GameWindow.getInstance(game);
+		assertEquals(game.players.get(0).getName(), "Adam");
 	}
 	
 }

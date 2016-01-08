@@ -5,33 +5,42 @@ import java.util.ArrayList;
 
 public class Game {
 	
-	ArrayList<Player> Players;
-	Card[] Cards;
+	ArrayList<Player> players;
+	Card[] cards;
 	int cardscounter;
+	String message;
 	
 	
 	public Game() {
-		Players = new ArrayList<Player>();
-		Cards = new Card[7];
+		players = new ArrayList<Player>();
+		cards = new Card[7];
 		cardscounter = 0;
+		message = "No message yet...";
 	}
 	
 	
 	public void addPlayer(String name, int credits) {
-		Players.add(new Player(name, credits));
+		players.add(new Player(name, credits));
 	}
 	
-	public void remPlayer() {
+	/*public void remPlayer() {
 		//TODO: implement!!!
-	}
+	}*/
 	
 	public void addCart(int card) {
-		Cards[cardscounter] = new Card(card);
+		cards[cardscounter] = new Card(card);
 		cardscounter++;
 	}
 	
+	public void clearCards() {
+		for (int i = 0; i < 7; i++) {
+			cards[i] = null;
+		}
+		cardscounter = 0;
+	}
+	
 	public int countPlayers() {
-		return Players.size();
+		return players.size();
 	}
 
 }

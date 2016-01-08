@@ -13,10 +13,12 @@ public class ConnectorWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = -5513393657278825789L;
 
-	Client client = null;
+	Client client;
 	
 	JTextField adres,port,imie;
-	JLabel Ladres, Lport, Limie;
+	JLabel Ladres;
+	JLabel Lport;
+	JLabel Limie;
 	JButton wyslij;
 	
 	ConnectorWindow(Client client, WindowListener listener) {

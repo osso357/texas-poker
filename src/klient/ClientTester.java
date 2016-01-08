@@ -1,8 +1,5 @@
 package klient;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
 public class ClientTester extends Client {
 
 	WindowActions listener;
@@ -22,7 +19,7 @@ public class ClientTester extends Client {
 		game.addCart(48);
 		game.addCart(21);
 		game.addCart(36);
-		gamewin = new GameWindow(game);
+		gamewin = GameWindow.getInstance(game);
 	}
 
 	public static void main(String[] args) {
