@@ -68,9 +68,10 @@ public class Table
 		
 		//dealerButtonPlayer.dealerButton = true;
 		
+		for(Player player : PlayersList) player.setChips(Chips);
+		
 		for(Player player : PlayersList)
 		{
-			player.setChips(Chips);
 			String initialMessage;
 			initialMessage = "S";
 			for(int i = 0; i < PlayersList.size(); i++)
