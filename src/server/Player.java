@@ -1,5 +1,6 @@
 package server;
 
+import java.util.List;
 
 public class Player
 {
@@ -13,9 +14,23 @@ public class Player
 		return this.Chips;
 	}
 	
+	public void giveChips(int chips)
+	{
+		setChips(Chips+chips);
+		playerConnector.playerGainedChips(chips);
+	}
+	
 	public void setChips(int chips)
 	{
 		this.Chips = chips;
+	}
+	
+	public void addCards(Card card1, Card card2, List<Card> tableCardsReference)
+	{
+		this.playerHand = new Hand(tableCardsReference);
+		playerHand.addToHand(card1);
+		playerHand.addToHand(card2);
+		playerConnector.sendPlayerCards(card1, card2);
 	}
 	
 	public String getNick()

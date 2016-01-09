@@ -11,6 +11,7 @@ public class Table
 	public int PlayersNumber, Chips, SmallBlind, BigBlind;
 	public List<Player> PlayersList;
 	private Deck deck;
+	private List<Card> tableCards;
 
 	ServerSocket serverSocket = null;
 	
@@ -29,7 +30,7 @@ public class Table
 		
 		while(PlayersList.size() < PlayersNumber)
 		{
-			PlayerConnector playerConnector = new PlayerConnector();
+			PlayerConnector playerConnector = new PlayerConnector(this.PlayersList);
 			try
 			{
 				playerConnector.initializeSocket(serverSocket);
@@ -62,6 +63,9 @@ public class Table
 	public void startGame()
 	{
 		deck = new Deck();
+		deck.shuffleDeck();
+		
+		tableCards = new ArrayList<Card>();
 
 		int dealerButtonIndex = (int)(Math.floor(Math.random()*PlayersList.size()));
 		Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
@@ -72,44 +76,34 @@ public class Table
 		
 		for(Player player : PlayersList)
 		{
-			String initialMessage;
-			initialMessage = "S";
-			for(int i = 0; i < PlayersList.size(); i++)
-			{
-				initialMessage += ":" + PlayersList.get(i).getNick();
-				initialMessage += ":" + PlayersList.get(i).getChips();
-			}
-			player.playerConnector.playerOutputStream.println(initialMessage);
-			
-			System.out.println("Wysylam do gracza "+ player.getNick() +": " + initialMessage);
-			
-			try {
-				System.out.println(player.playerConnector.playerInputStream.readLine());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			player.playerConnector.sendInitialMessage();
+			if(player.playerConnector.receiveMessage() == "fail") removePlayer(player);
 		}
 		
-		
-	/*	while(PlayersList.size() > 1)
+		for(Player player : PlayersList)
 		{
-			List<Card> tableCards = new ArrayList<Card>();
-			
-			PlayersList.get((dealerButtonIndex + 1 >= PlayersList.size()) ? dealerButtonIndex + 1 : 0).bid = SmallBlind;
-			PlayersList.get((dealerButtonIndex + 2 >= PlayersList.size()) ? dealerButtonIndex + 2 : 0).bid = BigBlind;
-			
-			deck.shuffleDeck();
-			
-			for(Player player : PlayersList)
-			{
-				player.drawCards(deck);
-			}
-		}*/
+			Card card1, card2;
+			card1 = deck.getFromTop();
+			card2 = deck.getFromTop();
+			player.addCards(card1, card2, tableCards);
+		}
+		
 		while(true);
 		
 	}
 	
+	private void removePlayer(Player player)
+	{
+		int chipsToGiveaway = player.getChips() / (PlayersList.size() - 1);
+		for(Player players : PlayersList)
+		{
+			if(players == player) continue;
+			player.giveChips(chipsToGiveaway);
+		}
+		// TODO Auto-generated method stub
+		
+	}
+
 	public static void main(String[] args)
 	{
 		Table s = new Table();
