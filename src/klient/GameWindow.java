@@ -17,9 +17,9 @@ public final class GameWindow extends JFrame{
 	static BetPanel bet;
 	Game game;
 	
-	public static GameWindow getInstance(Game currentgame) {
+	public static GameWindow getInstance(Game currentgame, WindowActions listener) {
         if (instance == null) {
-            instance = new GameWindow(currentgame);
+            instance = new GameWindow(currentgame, listener);
         }
         else
         {
@@ -29,14 +29,14 @@ public final class GameWindow extends JFrame{
         return instance;
     }
 	
-	private GameWindow(Game currentGame) {
+	private GameWindow(Game currentGame, WindowActions listener) {
 		setTitle("Texas Hold'em");
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		players = new PlayersPanel(currentGame);
 		add(players);
 		cards = new CardPanel(currentGame);
 		add(cards);
-		bet = new BetPanel(currentGame);
+		bet = new BetPanel(currentGame, listener);
 		add(bet);
 		messages = new MessagePanel();
 		add(messages);

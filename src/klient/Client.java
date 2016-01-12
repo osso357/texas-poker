@@ -28,12 +28,17 @@ public class Client{
 	protected void newGame()
 	{
 		ww.setVisible(false);
-		gamewin = GameWindow.getInstance(game);
+		gamewin = GameWindow.getInstance(game, listener);
 	}
 	
 	protected void refreshMessage()
 	{
 		GameWindow.messages.changeMessage(game.message);
+	}
+	
+	protected void refreshPlayers()
+	{
+		GameWindow.players.update();
 	}
 	
 	protected void connect()
