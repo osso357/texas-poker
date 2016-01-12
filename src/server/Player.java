@@ -66,6 +66,12 @@ public class Player
 		this.nick = playerConnector.getNick();
 	}
 	
+	public void changeNick(String newNick)
+	{
+		playerConnector.changeNick(this, newNick);
+		setNick();
+	}
+	
 	public void modifyPlayer()
 	{
 		playerConnector.modifyPlayer(Chips, actualBid);

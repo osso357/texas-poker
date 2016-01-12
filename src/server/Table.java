@@ -17,8 +17,8 @@ public class Table
 	
 	public boolean initialize()
 	{
-		PlayersList = new ArrayList<Player>()
-				{
+		PlayersList = new ArrayList<Player>();
+				/*{
 					int actualPlayer = 0;
 					int getNextPlayer()
 					{
@@ -31,7 +31,7 @@ public class Table
 						if(indexOf > size())actualPlayer = 0;
 						else actualPlayer = indexOf;
 					}
-				};
+				};*/
 		
 		try
 		{
@@ -39,7 +39,8 @@ public class Table
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("Port zajety!");
+			return false;
 		}
 		
 		while(PlayersList.size() < PlayersNumber)
@@ -134,13 +135,24 @@ public class Table
 			e.printStackTrace();
 		}
 		
-		//dealerButtonPlayer.playerConnector.
 		
 		for(Player player : PlayersList)
 		{
-			
+			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
 		}
 		
+		//Licytacja
+		
+		if(turn == 1)
+		{
+			dealerButtonPlayer.setActualBid(BigBlind);
+			dealerButtonPlayer.setChips(dealerButtonPlayer.getChips() - BigBlind);
+			dealerButtonPlayer.modifyPlayer();
+		}
+		
+		PlayersList.get((dealerButtonIndex + 1) % PlayersList.size()).playerConnector.sendMessage("L:2:5000");
+		
+		//dealerButtonPlayer.playerConnector.
 		while(true);
 		
 	}
@@ -153,6 +165,7 @@ public class Table
 			if(players == player) continue;
 			player.giveChips(chipsToGiveaway);
 		}
+		player.changeNick("odszed³");
 		// TODO Auto-generated method stub
 		
 	}
@@ -201,8 +214,7 @@ public class Table
 		try {
 			if(!s.serverSocket.isClosed()) s.serverSocket.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return;
 		}
 	}
 }

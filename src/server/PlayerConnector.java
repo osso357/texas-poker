@@ -35,6 +35,7 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		return nick;
 	}
 	
+	
 	public void sendInitialMessage()
 	{
 		String initialMessage;
@@ -111,13 +112,13 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	
 	public void modifyPlayer(int chips, int bid)
 	{
-		sendMessage("P:" + PlayerIndex + ":" + chips + ":" + bid);
+		for(Player player : PlayersList) player.playerConnector.sendMessage("P:" + PlayerIndex + ":" + chips + ":" + bid);
 	}
 	
 	@Override
 	public void changeNick(Player player, String newNick) {
 		sendMessage("N:" + player.getIndexNumber() + ":" + newNick);
-		
+		this.nick = newNick;
 	}
 
 }
