@@ -67,7 +67,7 @@ public class BetPanel extends JPanel {
 		}
 		else if (state == 5)
 		{
-			amount.setVisible(false);
+			amount.setVisible(true);
 			raise.setVisible(false);
 			check.setVisible(false);
 			call.setVisible(false);
