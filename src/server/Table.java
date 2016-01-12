@@ -17,7 +17,21 @@ public class Table
 	
 	public boolean initialize()
 	{
-		PlayersList = new ArrayList<Player>();
+		PlayersList = new ArrayList<Player>()
+				{
+					int actualPlayer = 0;
+					int getNextPlayer()
+					{
+						actualPlayer++;
+						if(actualPlayer >= size()) actualPlayer = 0;
+						return actualPlayer;
+					}
+					void setActualPlayer(int indexOf)
+					{
+						if(indexOf > size())actualPlayer = 0;
+						else actualPlayer = indexOf;
+					}
+				};
 		
 		try
 		{
@@ -45,6 +59,7 @@ public class Table
 			
 			PlayersList.add(player);
 			player.setNick();
+			player.setIndexNumber(PlayersList.indexOf(player));
 			System.out.println("Dolaczyl gracz, nick: " + player.getNick());
 			
 			/*for(Player connectedPlayer : PlayersList)
@@ -64,6 +79,7 @@ public class Table
 	{
 		deck = new Deck();
 		deck.shuffleDeck();
+		int turn = 1;
 		
 		tableCards = new ArrayList<Card>();
 
@@ -76,16 +92,53 @@ public class Table
 		
 		for(Player player : PlayersList)
 		{
+			if(player.playerConnector.receiveMessage() == "fail")
+			{
+				removePlayer(player);
+				continue;
+			}
 			player.playerConnector.sendInitialMessage();
-			if(player.playerConnector.receiveMessage() == "fail") removePlayer(player);
+			
 		}
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		for(Player player : PlayersList)
 		{
+			if(player == dealerButtonPlayer)
+			{
+				player.playerConnector.sendMessage("M:Otrzymujesz Dealer Button");
+				
+			}
+			else player.playerConnector.sendMessage("M:Gracz " + dealerButtonPlayer.getNick() + " otrzymuje Dealer Button");
+			
+			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
+			
 			Card card1, card2;
 			card1 = deck.getFromTop();
 			card2 = deck.getFromTop();
 			player.addCards(card1, card2, tableCards);
+		}
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//dealerButtonPlayer.playerConnector.
+		
+		for(Player player : PlayersList)
+		{
+			
 		}
 		
 		while(true);

@@ -9,6 +9,7 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	public Socket playerSocket;
 	public PrintWriter playerOutputStream;
 	public BufferedReader playerInputStream;
+	private int PlayerIndex;
 	private String nick;
 	private List<Player> PlayersList;
 	
@@ -66,6 +67,11 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		this.PlayersList = PlayerList;
 	}
 
+	public void setIndexNumber(int indexOf)
+	{
+		this.PlayerIndex = indexOf;
+	}
+	
 	@Override
 	public void sendDealerButtonInfo(Player dealerButtonPlayer) {
 		// TODO Auto-generated method stub
@@ -73,11 +79,10 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	}
 
 	@Override
-	public void startBidding() {
-		// TODO Auto-generated method stub
+	public void bidding() {
 		
 	}
-
+	
 	@Override
 	public String receiveMessage() {
 		// TODO Auto-generated method stub
@@ -96,6 +101,23 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		System.out.println("Do gracza " + nick + "C:" + (card1.getColor() * 13 + card1.getValue()) + " - Karta1, color: " + card1.getColor() + "value: "+ card1.getValue());
 		playerOutputStream.println("C:" + (card2.getColor() * 13 + card2.getValue()));
 		System.out.println("Do gracza " + nick + "C:" + (card2.getColor() * 13 + card2.getValue()) + " - Karta2, color: " + card2.getColor() + "value: "+ card2.getValue());
+	}
+
+	@Override
+	public void sendMessage(String message)
+	{
+		playerOutputStream.println(message);
+	}
+	
+	public void modifyPlayer(int chips, int bid)
+	{
+		sendMessage("P:" + PlayerIndex + ":" + chips + ":" + bid);
+	}
+	
+	@Override
+	public void changeNick(Player player, String newNick) {
+		sendMessage("N:" + player.getIndexNumber() + ":" + newNick);
+		
 	}
 
 }
