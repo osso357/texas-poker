@@ -28,6 +28,7 @@ public class ErrorWindow extends JFrame{
 		add(message);
 		ok = new JButton("OK");
 		ok.setActionCommand("errorWinOK");
+		ok.addActionListener(listener);
 		add(ok);
 		setSize(400,70);
 		setLocationRelativeTo(null);

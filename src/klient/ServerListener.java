@@ -59,6 +59,21 @@ class ServerListener extends Thread{
 			else if (mtable[0].equals("L")) { //licytacja
 				//ignore
 			}
+			else if (mtable[0].equals("E")) { //Błąd wymuszający konie gry E:[komunikat]
+				if(client.gamewin != null)
+				{
+					client.gamewin.setVisible(false);
+				}
+				if(client.ww != null)
+				{
+					client.ww.setVisible(false);
+				}
+				if(client.connector != null)
+				{
+					client.connector.setVisible(false);
+				}
+				client.error = new ErrorWindow(mtable[1], client.listener);
+			}
 		}
 		}
 		catch  (IOException e) {

@@ -14,7 +14,7 @@ public class Client{
 	Game game;
 	ErrorWindow error;
 	
-	public static void main(){
+	public static void main(String[] args){
 		new Client();
 	}
 	

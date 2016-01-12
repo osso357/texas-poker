@@ -11,7 +11,7 @@ public class ClientTest {
 	
 	@Test
 	public void testMain() {
-		Client.main();
+		Client.main(null);
 		//assertEquals(client.getName(), name);
 	}
 
