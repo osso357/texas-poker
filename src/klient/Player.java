@@ -36,4 +36,9 @@ public class Player {
 	{
 		return name;
 	}
+	
+	public void changeName(String newName)
+	{
+		name = newName;
+	}
 }

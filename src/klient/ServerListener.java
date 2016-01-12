@@ -57,7 +57,7 @@ class ServerListener extends Thread{
 				game.clearCards(); //wyzeruj karty
 			}
 			else if (mtable[0].equals("L")) { //licytacja
-				//ignore
+				client.gamewin.bet.setState(Integer.parseInt(mtable[1]));
 			}
 			else if (mtable[0].equals("E")) { //Błąd wymuszający konie gry E:[komunikat]
 				if(client.gamewin != null)
@@ -73,6 +73,15 @@ class ServerListener extends Thread{
 					client.connector.setVisible(false);
 				}
 				client.error = new ErrorWindow(mtable[1], client.listener);
+			}
+			else if (mtable[0].equals("P")) { //P:x:y:z  x - nr gracza, y - dostępne kredyty, z - aktualny zakład
+				game.players.get(Integer.parseInt(mtable[1])).changeCredits(Integer.parseInt(mtable[2]));
+				game.players.get(Integer.parseInt(mtable[1])).changeBet(Integer.parseInt(mtable[3]));
+				client.refreshPlayers();
+			}
+			else if (mtable[0].equals("N")) { //N:x:abc  x - nr gracza, abc - nowy nick
+				game.players.get(Integer.parseInt(mtable[1])).changeName((mtable[2]));
+				client.refreshPlayers();
 			}
 		}
 		}

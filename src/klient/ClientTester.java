@@ -19,7 +19,7 @@ public class ClientTester extends Client {
 		game.addCart(48);
 		game.addCart(21);
 		game.addCart(36);
-		gamewin = GameWindow.getInstance(game);
+		gamewin = GameWindow.getInstance(game, listener);
 	}
 
 	public static void main(String[] args) {
