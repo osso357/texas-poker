@@ -11,9 +11,10 @@ public class Client{
 	WaitWindow ww;
 	GameWindow gamewin;
 	ServerListener slistener;
-	Game game; 
+	Game game;
+	ErrorWindow error;
 	
-	public static void main(String[] args){
+	public static void main(){
 		new Client();
 	}
 	
@@ -46,12 +47,22 @@ public class Client{
 		slistener.start();
 		slistener.write("S:0:" + connector.imie.getText());
 		}
+		catch (NumberFormatException e)
+		{
+			System.out.println("Port not a number");
+			ww.setVisible(false);
+			error = new ErrorWindow("Niepoprawne dane - port nie jest liczbą ", listener);
+		}
 		catch (UnknownHostException e) {
 			System.out.println("Unknown host");
+			ww.setVisible(false);
+			error = new ErrorWindow("Nieznany host ", listener);
 			//System.exit(1);
 		}
 		catch  (IOException e) {
 			System.out.println("No I/O");
+			ww.setVisible(false);
+			error = new ErrorWindow("Brak połączenia ", listener);
 			//System.exit(1);
 		}
 	}
