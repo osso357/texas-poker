@@ -28,8 +28,8 @@ public class ConnectorWindow extends JFrame {
     setFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
 	setLayout(new GridLayout(4,2));
 	imie = new JTextField(20);
-	adres = new JTextField(20);
-	port = new JTextField(4);
+	adres = new JTextField("localhost");
+	port = new JTextField("65025");
 	Limie = new JLabel();
 	Ladres = new JLabel();
 	Lport = new JLabel();

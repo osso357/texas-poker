@@ -52,6 +52,7 @@ class ServerListener extends Thread{
 			}
 			else if (mtable[0].equals("C")) {
 				game.addCart(Integer.parseInt(mtable[1])); //Dodaj kartę
+				client.gamewin.cards.update();
 			}
 			else if (mtable[0].equals("CLR")) {
 				game.clearCards(); //wyzeruj karty
@@ -82,6 +83,7 @@ class ServerListener extends Thread{
 			else if (mtable[0].equals("N")) { //N:x:abc  x - nr gracza, abc - nowy nick
 				game.players.get(Integer.parseInt(mtable[1])).changeName((mtable[2]));
 				client.refreshPlayers();
+				System.out.println("zmiana nicka");
 			}
 		}
 		}

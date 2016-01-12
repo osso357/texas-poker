@@ -27,63 +27,63 @@ public class BetPanel extends JPanel {
 	{
 		if (state == 1)
 		{
-			amount.setEnabled(false);
-			raise.setEnabled(false);
-			check.setEnabled(false);
-			call.setEnabled(false);
-			bet.setEnabled(false);
-			allin.setEnabled(true);
-			fold.setEnabled(true);
+			amount.setVisible(false);
+			raise.setVisible(false);
+			check.setVisible(false);
+			call.setVisible(false);
+			bet.setVisible(false);
+			allin.setVisible(true);
+			fold.setVisible(true);
 		}
 		else if (state == 2)
 		{
-			amount.setEnabled(false);
-			raise.setEnabled(false);
-			check.setEnabled(false);
-			call.setEnabled(true);
-			bet.setEnabled(false);
-			allin.setEnabled(false);
-			fold.setEnabled(true);
+			amount.setVisible(false);
+			raise.setVisible(false);
+			check.setVisible(false);
+			call.setVisible(true);
+			bet.setVisible(false);
+			allin.setVisible(false);
+			fold.setVisible(true);
 		}
 		else if (state == 3)
 		{
-			amount.setEnabled(true);
-			raise.setEnabled(true);
-			check.setEnabled(false);
-			call.setEnabled(true);
-			bet.setEnabled(false);
-			allin.setEnabled(false);
-			fold.setEnabled(true);
+			amount.setVisible(true);
+			raise.setVisible(true);
+			check.setVisible(false);
+			call.setVisible(true);
+			bet.setVisible(false);
+			allin.setVisible(false);
+			fold.setVisible(true);
 		}
 		else if (state == 4)
 		{
-			amount.setEnabled(false);
-			raise.setEnabled(false);
-			check.setEnabled(true);
-			call.setEnabled(false);
-			bet.setEnabled(false);
-			allin.setEnabled(false);
-			fold.setEnabled(true);
+			amount.setVisible(false);
+			raise.setVisible(false);
+			check.setVisible(true);
+			call.setVisible(false);
+			bet.setVisible(false);
+			allin.setVisible(false);
+			fold.setVisible(true);
 		}
 		else if (state == 5)
 		{
-			amount.setEnabled(false);
-			raise.setEnabled(false);
-			check.setEnabled(false);
-			call.setEnabled(false);
-			bet.setEnabled(true);
-			allin.setEnabled(false);
-			fold.setEnabled(true);
+			amount.setVisible(false);
+			raise.setVisible(false);
+			check.setVisible(false);
+			call.setVisible(false);
+			bet.setVisible(true);
+			allin.setVisible(false);
+			fold.setVisible(true);
 		}
 		else if (state == 6)
 		{
-			amount.setEnabled(false);
-			raise.setEnabled(false);
-			check.setEnabled(false);
-			call.setEnabled(false);
-			bet.setEnabled(false);
-			allin.setEnabled(false);
-			fold.setEnabled(false);
+			amount.setVisible(false);
+			raise.setVisible(false);
+			check.setVisible(false);
+			call.setVisible(false);
+			bet.setVisible(false);
+			allin.setVisible(false);
+			fold.setVisible(false);
 		}
 	}
 	
@@ -114,13 +114,13 @@ public class BetPanel extends JPanel {
 		add(allin);
 		add(fold);
 		
-		amount.setEnabled(false);
-		raise.setEnabled(false);
-		check.setEnabled(false);
-		call.setEnabled(false);
-		bet.setEnabled(false);
-		allin.setEnabled(false);
-		fold.setEnabled(false);
+		amount.setVisible(false);
+		raise.setVisible(false);
+		check.setVisible(false);
+		call.setVisible(false);
+		bet.setVisible(false);
+		allin.setVisible(false);
+		fold.setVisible(false);
 		setVisible(true);
 	}
 }

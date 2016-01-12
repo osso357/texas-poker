@@ -41,13 +41,10 @@ public class PlayersPanel extends JPanel{
 	}
 	
 	public void update() {
-		imiona = new JLabel[game.countPlayers()];
-		kredyty = new JLabel[game.countPlayers()];
 		for (int i = 0; i < game.countPlayers(); i++) {
-			imiona[i] = new JLabel(game.players.get(i).getName());
-			add(imiona[i]);
-			kredyty[i] = new JLabel(Integer.toString(game.players.get(i).getBet()));
-			add(kredyty[i]);
+			imiona[i].setText((game.players.get(i).getName()));
+			kredyty[i].setText(Integer.toString(game.players.get(i).getCredits()));
+			zaklad[i].setText(Integer.toString(game.players.get(i).getBet()));
 		}
 	}
     
