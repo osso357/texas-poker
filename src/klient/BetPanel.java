@@ -93,16 +93,22 @@ public class BetPanel extends JPanel {
 		setPreferredSize(new Dimension(700,50));
 		fold = new JButton("Fold");
 		fold.setActionCommand("fold");
+		fold.addActionListener(listener);
 		bet = new JButton("Bet");
 		bet.setActionCommand("Bet");
+		bet.addActionListener(listener);
 		check = new JButton("Check");
 		check.setActionCommand("Check");
+		check.addActionListener(listener);
 		call = new JButton("Call");
 		call.setActionCommand("Call");
+		call.addActionListener(listener);
 		raise = new JButton("Raise");
 		raise.setActionCommand("Raise");
+		raise.addActionListener(listener);
 		allin = new JButton("All-In");
 		allin.setActionCommand("All-In");
+		allin.addActionListener(listener);
 		amount = new JTextField(20);
 		
 		
