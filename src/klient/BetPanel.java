@@ -92,7 +92,7 @@ public class BetPanel extends JPanel {
 		//setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		setPreferredSize(new Dimension(700,50));
 		fold = new JButton("Fold");
-		fold.setActionCommand("fold");
+		fold.setActionCommand("Fold");
 		fold.addActionListener(listener);
 		bet = new JButton("Bet");
 		bet.setActionCommand("Bet");
