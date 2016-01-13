@@ -45,16 +45,17 @@ public class PlayerConnector implements PlayerConnectorAdapter
 			initialMessage += ":" + PlayersList.get(i).getNick();
 			initialMessage += ":" + PlayersList.get(i).getChips();
 		}
+		System.out.println("step1");
 		playerOutputStream.println(initialMessage);
-		
+		System.out.println("step2");
 		System.out.println("Wysylam do gracza "+ nick +": " + initialMessage);
 		
-		try {
+	/*	try {
 			System.out.println(playerInputStream.readLine());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Override
@@ -90,6 +91,7 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		String ret = null;
 		try {
 			ret = playerInputStream.readLine();
+			System.out.println(ret);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

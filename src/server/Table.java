@@ -97,12 +97,13 @@ public class Table
 		
 		for(Player player : PlayersList)
 		{
-			if(player.playerConnector.receiveMessage() == "fail")
+			/*if(player.playerConnector.receiveMessage() == "fail")
 			{
 				removePlayer(player);
 				continue;
-			}
+			}*/
 			player.playerConnector.sendInitialMessage();
+			System.out.println("SendInitialMessage");
 			
 		}
 		
