@@ -7,18 +7,31 @@ public class Player
 	private Hand playerHand;
 	private String nick;
 	private int Chips;
-	private int actualBid;
+	private int actualBet;
 	private int indexNumber;
+	private int state;
 	public PlayerConnector playerConnector;
 	
-	public void setActualBid(int bid)
+	public void setState(int state)
 	{
-		this.actualBid = bid;
+		this.state = state;
+		playerConnector.setBiddingStatus(state, Chips);
 	}
 	
-	public int getActualBid()
+	public int getState()
 	{
-		return this.actualBid;
+		return this.state;
+	}
+	
+	public void setActualBet(int bet)
+	{
+		this.actualBet = bet;
+		this.Chips = this.Chips - this.actualBet;
+	}
+	
+	public int getActualBet()
+	{
+		return this.actualBet;
 	}
 	
 	public void setIndexNumber(int index)
@@ -48,6 +61,17 @@ public class Player
 		this.Chips = chips;
 	}
 	
+	public void setBiddingStatus(int maxBet)
+	{
+		if(actualBet < maxBet && Chips + actualBet < maxBet) state = 1;
+		else if(actualBet < maxBet) state = 2;
+		else if(actualBet < maxBet && Chips > maxBet) state = 3;
+		else if(maxBet == actualBet) state = 4;
+		else if(actualBet == 0) state = 5;
+		
+		playerConnector.setBiddingStatus(state, Chips);
+	}
+	
 	public void addCards(Card card1, Card card2, List<Card> tableCardsReference)
 	{
 		this.playerHand = new Hand(tableCardsReference);
@@ -74,7 +98,7 @@ public class Player
 	
 	public void modifyPlayer()
 	{
-		playerConnector.modifyPlayer(Chips, actualBid);
+		playerConnector.modifyPlayer(Chips, actualBet);
 	}
 	
 	public boolean isConnected()

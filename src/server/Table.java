@@ -12,26 +12,29 @@ public class Table
 	public List<Player> PlayersList;
 	private Deck deck;
 	private List<Card> tableCards;
+	private int actualPlayer;
+	private int maxBet;
 
 	ServerSocket serverSocket = null;
+	
+	private int getActualPlayer()
+	{
+		return actualPlayer;
+	}
+	private void setActualPlayer(int indexOf)
+	{
+		actualPlayer = indexOf;
+	}
+	private int getNextPlayer()
+	{
+		actualPlayer++;
+		if(actualPlayer >= PlayersList.size()) actualPlayer = 0;
+		return actualPlayer;
+	}
 	
 	public boolean initialize()
 	{
 		PlayersList = new ArrayList<Player>();
-				/*{
-					int actualPlayer = 0;
-					int getNextPlayer()
-					{
-						actualPlayer++;
-						if(actualPlayer >= size()) actualPlayer = 0;
-						return actualPlayer;
-					}
-					void setActualPlayer(int indexOf)
-					{
-						if(indexOf > size())actualPlayer = 0;
-						else actualPlayer = indexOf;
-					}
-				};*/
 		
 		try
 		{
@@ -80,14 +83,14 @@ public class Table
 	{
 		deck = new Deck();
 		deck.shuffleDeck();
-		int turn = 1;
 		
 		tableCards = new ArrayList<Card>();
 
 		int dealerButtonIndex = (int)(Math.floor(Math.random()*PlayersList.size()));
 		Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
 		
-		//dealerButtonPlayer.dealerButton = true;
+		
+		setActualPlayer(dealerButtonIndex);
 		
 		for(Player player : PlayersList) player.setChips(Chips);
 		
@@ -135,23 +138,26 @@ public class Table
 			e.printStackTrace();
 		}
 		
+		PlayersList.get(getNextPlayer()).setActualBet(SmallBlind);
+		PlayersList.get(getActualPlayer()).modifyPlayer();
+		PlayersList.get(getNextPlayer()).setActualBet(BigBlind);
+		PlayersList.get(getActualPlayer()).modifyPlayer();
+		
+		maxBet = BigBlind;
 		
 		for(Player player : PlayersList)
 		{
 			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
+			player.setBiddingStatus(maxBet);
 		}
 		
 		//Licytacja
 		
-		if(turn == 1)
+		int turn = 1;
+		while(turn < 4)
 		{
-			dealerButtonPlayer.setActualBid(BigBlind);
-			dealerButtonPlayer.setChips(dealerButtonPlayer.getChips() - BigBlind);
-			dealerButtonPlayer.modifyPlayer();
+			
 		}
-		
-		PlayersList.get((dealerButtonIndex + 1) % PlayersList.size()).playerConnector.sendMessage("L:2:5000");
-		
 		//dealerButtonPlayer.playerConnector.
 		while(true);
 		

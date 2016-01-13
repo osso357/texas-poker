@@ -80,8 +80,9 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	}
 
 	@Override
-	public void bidding() {
-		
+	public void setBiddingStatus(int state, int remainingChips)
+	{
+		sendMessage("L:" + state + ":" + remainingChips);
 	}
 	
 	@Override
