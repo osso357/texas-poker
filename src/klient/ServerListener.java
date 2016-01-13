@@ -30,7 +30,6 @@ class ServerListener extends Thread{
 		{
 		while (stop == 0)
 			{
-			write("Test");
 			mes = in.readLine();
 			System.out.println(mes);
 			
