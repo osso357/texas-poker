@@ -77,7 +77,8 @@ public class Player
 		this.playerHand = new Hand(tableCardsReference);
 		playerHand.addToHand(card1);
 		playerHand.addToHand(card2);
-		playerConnector.sendPlayerCards(card1, card2);
+		playerConnector.sendPlayerCards(card1);
+		playerConnector.sendPlayerCards(card2);
 	}
 	
 	public String getNick()

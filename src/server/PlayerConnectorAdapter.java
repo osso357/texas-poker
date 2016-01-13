@@ -14,7 +14,7 @@ public interface PlayerConnectorAdapter
 	String receiveMessage();
 	void sendMessage(String message);
 	void playerGainedChips(int chips);
-	void sendPlayerCards(Card card1, Card card2);
+	void sendPlayerCards(Card card1);
 	void changeNick(Player player, String newNick);
 	void setBiddingStatus(int state, int remainingChips);
 	

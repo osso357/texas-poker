@@ -81,6 +81,7 @@ public class Table
 	
 	public void startGame()
 	{
+		System.out.println("Startuje gre");
 		deck = new Deck();
 		deck.shuffleDeck();
 		
@@ -148,7 +149,7 @@ public class Table
 		for(Player player : PlayersList)
 		{
 			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
-			player.setBiddingStatus(maxBet);
+			player.setState(6);
 		}
 		
 		//Licytacja
@@ -156,7 +157,24 @@ public class Table
 		int turn = 1;
 		while(turn < 4)
 		{
+			int startingPlayerIndex = getActualPlayer();
 			
+			//System.out.println("starting=" + startingPlayerIndex + ", actual=" + getActualPlayer() + "\n");
+			do
+			{
+				Player actualPlayer = PlayersList.get(getNextPlayer());
+				actualPlayer.setBiddingStatus(maxBet);
+				String messageReceived = actualPlayer.playerConnector.receiveMessage();
+				System.out.println("text: " + messageReceived);
+			}
+			while(startingPlayerIndex != getActualPlayer());
+			
+			tableCards.add(deck.getFromTop());
+			for(Player player : PlayersList)
+			{
+				player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 1));
+			}
+			turn++;
 		}
 		//dealerButtonPlayer.playerConnector.
 		while(true);

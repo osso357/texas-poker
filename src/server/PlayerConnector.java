@@ -87,8 +87,14 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	
 	@Override
 	public String receiveMessage() {
-		// TODO Auto-generated method stub
-		return null;
+		String ret = null;
+		try {
+			ret = playerInputStream.readLine();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 
 	@Override
@@ -97,12 +103,10 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		
 	}
 
-	public void sendPlayerCards(Card card1, Card card2) {
+	public void sendPlayerCards(Card card1) {
 		// TODO Auto-generated method stub
 		playerOutputStream.println("C:" + (card1.getColor() * 13 + card1.getValue()));
-		System.out.println("Do gracza " + nick + "C:" + (card1.getColor() * 13 + card1.getValue()) + " - Karta1, color: " + card1.getColor() + "value: "+ card1.getValue());
-		playerOutputStream.println("C:" + (card2.getColor() * 13 + card2.getValue()));
-		System.out.println("Do gracza " + nick + "C:" + (card2.getColor() * 13 + card2.getValue()) + " - Karta2, color: " + card2.getColor() + "value: "+ card2.getValue());
+		//System.out.println("Do gracza " + nick + "C:" + (card1.getColor() * 13 + card1.getValue()) + " - Karta1, color: " + card1.getColor() + "value: "+ card1.getValue());
 	}
 
 	@Override
