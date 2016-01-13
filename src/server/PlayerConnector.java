@@ -91,7 +91,6 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		String ret = null;
 		try {
 			ret = playerInputStream.readLine();
-			System.out.println(ret);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -127,5 +126,6 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		sendMessage("N:" + player.getIndexNumber() + ":" + newNick);
 		this.nick = newNick;
 	}
+	
 
 }

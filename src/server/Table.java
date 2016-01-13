@@ -165,14 +165,38 @@ public class Table
 			{
 				Player actualPlayer = PlayersList.get(getNextPlayer());
 				actualPlayer.setBiddingStatus(maxBet);
+				if(actualPlayer.folded) continue;
 				String messageReceived = actualPlayer.playerConnector.receiveMessage();
-				System.out.println("text: " + messageReceived);
+				System.out.println("otrzymano: " + messageReceived);
+				actualPlayer.setState(6);
+				
+				if(messageReceived.equals("FOLD")){
+					actualPlayer.folded = true;
+					System.out.println(actualPlayer.getNick() + " zfoldowal");
+				}
+				else if(messageReceived.equals("CHECK")) continue;
+				else if(messageReceived.equals("CALL"))
+				{
+					actualPlayer.setChips(actualPlayer.getChips() - maxBet + actualPlayer.getActualBet());
+					actualPlayer.setActualBet(maxBet);
+					actualPlayer.modifyPlayer();
+				}
+				
 			}
 			while(startingPlayerIndex != getActualPlayer());
-			
+			if(turn == 1)
+			{
+				tableCards.add(deck.getFromTop());
+				tableCards.add(deck.getFromTop());
+			}
 			tableCards.add(deck.getFromTop());
 			for(Player player : PlayersList)
 			{
+				if(turn == 1)
+				{
+					player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 3));
+					player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 2));;
+				}
 				player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 1));
 			}
 			turn++;
