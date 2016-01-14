@@ -202,6 +202,26 @@ public class Table
 			turn++;
 		}
 		//dealerButtonPlayer.playerConnector.
+		
+		for(Player player : PlayersList)
+		{
+			player.evaluateHand();
+		}
+		
+		Player winningPlayer = PlayersList.get(0);
+		
+		for(int i = 1; i < PlayersList.size(); i++)
+		{
+			Player comparingPlayer = PlayersList.get(i); 
+			if(winningPlayer.getHand().compareTo(comparingPlayer.getHand()) < 0) winningPlayer = comparingPlayer;
+		}
+		
+		for(Player player : PlayersList)
+		{
+			player.playerConnector.sendWinner(winningPlayer);
+		}
+		//winningPlayer.playerConnector.sendMessage("M:Wygra³eœ!");
+		
 		while(true);
 		
 	}
@@ -255,7 +275,7 @@ public class Table
 			s.PlayersNumber = 2;
 			s.Chips = 5000;
 			s.SmallBlind = 200;
-			s.BigBlind = 400;
+			s.BigBlind = 555;
 		}
 		
 		if(s.initialize()) s.startGame();

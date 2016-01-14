@@ -126,6 +126,12 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		sendMessage("N:" + player.getIndexNumber() + ":" + newNick);
 		this.nick = newNick;
 	}
+
+	public void sendWinner(Player winningPlayer) {
+		int winnerIndex = winningPlayer.getIndexNumber();
+		if(winnerIndex == this.PlayerIndex) sendMessage("M:Wygra³eœ!");
+		else sendMessage("M:Gracz " + winningPlayer.getNick() + " wygrywa runde!");
+	}
 	
 
 }

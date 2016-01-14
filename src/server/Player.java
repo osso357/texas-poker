@@ -5,6 +5,7 @@ import java.util.List;
 public class Player
 {
 	private Hand playerHand;
+	private int[] handScore;
 	private String nick;
 	private int Chips;
 	private int actualBet;
@@ -107,6 +108,17 @@ public class Player
 	public void modifyPlayer()
 	{
 		playerConnector.modifyPlayer(Chips, actualBet);
+	}
+	
+	public void evaluateHand()
+	{
+		playerHand.evaluateHand();
+		this.handScore = playerHand.handValue;
+	}
+	
+	public Hand getHand()
+	{
+		return playerHand;
 	}
 	
 	public boolean isConnected()
