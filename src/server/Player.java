@@ -11,6 +11,7 @@ public class Player
 	private int indexNumber;
 	private int state;
 	public PlayerConnector playerConnector;
+	public boolean folded;
 	
 	public void setState(int state)
 	{
@@ -63,13 +64,19 @@ public class Player
 	
 	public void setBiddingStatus(int maxBet)
 	{
-		if(actualBet < maxBet && Chips + actualBet < maxBet) state = 1;
-		else if(actualBet < maxBet) state = 2;
-		else if(actualBet < maxBet && Chips > maxBet) state = 3;
-		else if(maxBet == actualBet) state = 4;
-		else if(actualBet == 0) state = 5;
+		if(folded)
+		{
+			//playerConnector.setBiddingStatus(6, Chips);
+			setState(6);
+			return;
+		}
+		if(actualBet < maxBet && Chips + actualBet < maxBet) setState(1);
+		else if(actualBet < maxBet) setState(2);
+		else if(actualBet < maxBet && Chips > maxBet) setState(3);
+		else if(maxBet == actualBet) setState(4);
+		else if(actualBet == 0) setState(5);
 		
-		playerConnector.setBiddingStatus(state, Chips);
+		//playerConnector.setBiddingStatus(state, Chips);
 	}
 	
 	public void addCards(Card card1, Card card2, List<Card> tableCardsReference)
