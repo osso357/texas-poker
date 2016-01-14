@@ -189,12 +189,19 @@ public class Table
 				
 				if(actualPlayer.folded || actualPlayer.allIn) continue;
 				//Ustawianie guzikow
-				if(actualPlayer.folded) continue;
-				if(checkTurnBets()) actualPlayer.enableButton(1);
+				//if(actualPlayer.folded) continue;
+				
+				//check
+				if((checkTurnBets()) || (actualPlayer == dealerButtonPlayer)) actualPlayer.enableButton(1);
+				//Bet
 				if(checkTurnBets()) actualPlayer.enableButton(2);
+				//Raise
 				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(3);
+				//Call
 				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(4);
+				//fold
 				actualPlayer.enableButton(5);
+				//AllIn
 				if(maxBet > actualPlayer.getActualBet() + actualPlayer.getChips()) actualPlayer.enableButton(6);
 				
 				
@@ -238,6 +245,13 @@ public class Table
 			}
 			while(!checkBets());
 			
+			for(Player player : PlayersList)
+			{
+				pot += player.getActualBet();
+				player.setActualBet(0);
+				player.playerConnector.sendMessage("Pula wynosi " + pot + " ¿etonów");
+			}
+			
 			if(turn == 1)
 			{
 				tableCards.add(deck.getFromTop());
@@ -274,7 +288,9 @@ public class Table
 		{
 			player.playerConnector.sendWinner(winningPlayer);
 		}
-		//winningPlayer.playerConnector.sendMessage("M:Wygra³eœ!");
+		winningPlayer.setChips(winningPlayer.getChips() + pot);
+		winningPlayer.modifyPlayer();
+		pot = 0;
 		
 		while(true);
 		
