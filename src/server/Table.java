@@ -177,7 +177,6 @@ public class Table
 				else if(messageReceived.equals("CHECK")) continue;
 				else if(messageReceived.equals("CALL"))
 				{
-					actualPlayer.setChips(actualPlayer.getChips() - maxBet + actualPlayer.getActualBet());
 					actualPlayer.setActualBet(maxBet);
 					actualPlayer.modifyPlayer();
 				}
