@@ -1,11 +1,17 @@
 package klient;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 public class BetPanel extends JPanel {
 
@@ -14,6 +20,9 @@ public class BetPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = -1470374201074727889L;
 	
+	Border blackline;
+	TitledBorder border;
+	
 	JButton fold;
 	JButton call;
 	JButton bet;
@@ -21,6 +30,7 @@ public class BetPanel extends JPanel {
 	JButton raise;
 	JButton allin;
 	JTextField amount;
+	JLabel notPossible;
 	Game game;
 
 	public void setState(int state)
@@ -34,6 +44,7 @@ public class BetPanel extends JPanel {
 			bet.setVisible(false);
 			allin.setVisible(true);
 			fold.setVisible(true);
+			notPossible.setVisible(false);
 		}
 		else if (state == 2)
 		{
@@ -44,6 +55,7 @@ public class BetPanel extends JPanel {
 			bet.setVisible(false);
 			allin.setVisible(false);
 			fold.setVisible(true);
+			notPossible.setVisible(false);
 		}
 		else if (state == 3)
 		{
@@ -54,6 +66,7 @@ public class BetPanel extends JPanel {
 			bet.setVisible(false);
 			allin.setVisible(false);
 			fold.setVisible(true);
+			notPossible.setVisible(false);
 		}
 		else if (state == 4)
 		{
@@ -64,6 +77,7 @@ public class BetPanel extends JPanel {
 			bet.setVisible(false);
 			allin.setVisible(false);
 			fold.setVisible(true);
+			notPossible.setVisible(false);
 		}
 		else if (state == 5)
 		{
@@ -74,6 +88,7 @@ public class BetPanel extends JPanel {
 			bet.setVisible(true);
 			allin.setVisible(false);
 			fold.setVisible(true);
+			notPossible.setVisible(false);
 		}
 		else if (state == 6)
 		{
@@ -84,13 +99,19 @@ public class BetPanel extends JPanel {
 			bet.setVisible(false);
 			allin.setVisible(false);
 			fold.setVisible(false);
+			notPossible.setVisible(true);
 		}
 	}
 	
 	public BetPanel(Game currentgame, WindowActions listener) {
 		//Game game = currentgame;
-		//setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		setPreferredSize(new Dimension(700,50));
+		setLayout(new FlowLayout(FlowLayout.CENTER));
+		blackline = BorderFactory.createLineBorder(Color.black);
+		border = BorderFactory.createTitledBorder("OPCJE LICYTACJI");
+		setBorder(border);
+		border.setTitleJustification(TitledBorder.LEFT);
+		
+		setPreferredSize(new Dimension(700,60));
 		fold = new JButton("Fold");
 		fold.setActionCommand("Fold");
 		fold.addActionListener(listener);
@@ -110,6 +131,7 @@ public class BetPanel extends JPanel {
 		allin.setActionCommand("All-In");
 		allin.addActionListener(listener);
 		amount = new JTextField(20);
+		notPossible = new JLabel("Nie możesz licytować w tej chwili");
 		
 		
 		add(amount);
@@ -119,6 +141,7 @@ public class BetPanel extends JPanel {
 		add(bet);
 		add(allin);
 		add(fold);
+		add(notPossible);
 		
 		amount.setVisible(false);
 		raise.setVisible(false);
@@ -127,6 +150,7 @@ public class BetPanel extends JPanel {
 		bet.setVisible(false);
 		allin.setVisible(false);
 		fold.setVisible(false);
+		notPossible.setVisible(true);
 		setVisible(true);
 	}
 }

@@ -21,6 +21,7 @@ public class MessagePanel extends JPanel{
 		border = BorderFactory.createTitledBorder("WIADOMOŚĆ");
 		setBorder(border);
 		border.setTitleJustification(TitledBorder.LEFT);
+		setPreferredSize(new Dimension(700,60));
 		message = new JLabel("No message yet. Waiting for something probably...");
 		add(message);
 		setVisible(true);
