@@ -11,8 +11,20 @@ public class Player
 	private int actualBet;
 	private int indexNumber;
 	private int state;
+	private int turnBet = 0;
 	public PlayerConnector playerConnector;
-	public boolean folded;
+	public boolean folded = false, allIn = false;
+	
+	public int getTurnBet()
+	{
+		return turnBet;
+	}
+	
+	public void setTurnBet(int turnBet)
+	{
+		this.turnBet = turnBet;
+	}
+	
 	
 	public void setState(int state)
 	{
@@ -28,7 +40,12 @@ public class Player
 	public void setActualBet(int bet)
 	{
 		this.actualBet = bet;
-		this.Chips = this.Chips - this.actualBet;
+	}
+	
+	public void addToBet(int bet)
+	{
+		this.actualBet += bet;
+		this.Chips -= bet;
 	}
 	
 	public int getActualBet()
@@ -72,8 +89,8 @@ public class Player
 			return;
 		}
 		if(actualBet < maxBet && Chips + actualBet < maxBet) setState(1);
+		else if(actualBet <= maxBet && Chips + actualBet > maxBet) setState(3);
 		else if(actualBet < maxBet) setState(2);
-		else if(actualBet < maxBet && Chips > maxBet) setState(3);
 		else if(maxBet == actualBet) setState(4);
 		else if(actualBet == 0) setState(5);
 		
@@ -131,5 +148,9 @@ public class Player
 		this.playerConnector = (PlayerConnector) playerConnector;
 	}
 	
+	public void enableButton(int buttonIndex)
+	{
+		playerConnector.enableButton(buttonIndex);
+	}
 }
 

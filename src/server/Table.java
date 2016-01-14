@@ -14,6 +14,7 @@ public class Table
 	private List<Card> tableCards;
 	private int actualPlayer;
 	private int maxBet;
+	private int pot;
 
 	ServerSocket serverSocket = null;
 	
@@ -79,9 +80,30 @@ public class Table
 		return true;
 	}
 	
+	public boolean checkBets()
+	{
+		int playerBet = PlayersList.get(0).getActualBet();
+		for(Player player : PlayersList)
+		{
+			if(player.folded || player.allIn) continue;
+			if(playerBet != player.getActualBet()) return false;
+		}
+		return true;
+	}
+	
+	public boolean checkTurnBets()
+	{
+		for(Player player : PlayersList)
+		{
+			if(player.getTurnBet() != 0) return false;
+		}
+		return true;
+	}
+	
 	public void startGame()
 	{
 		System.out.println("Startuje gre");
+		
 		deck = new Deck();
 		deck.shuffleDeck();
 		
@@ -140,9 +162,9 @@ public class Table
 			e.printStackTrace();
 		}
 		
-		PlayersList.get(getNextPlayer()).setActualBet(SmallBlind);
+		PlayersList.get(getNextPlayer()).addToBet(SmallBlind);
 		PlayersList.get(getActualPlayer()).modifyPlayer();
-		PlayersList.get(getNextPlayer()).setActualBet(BigBlind);
+		PlayersList.get(getNextPlayer()).addToBet(BigBlind);
 		PlayersList.get(getActualPlayer()).modifyPlayer();
 		
 		maxBet = BigBlind;
@@ -159,13 +181,25 @@ public class Table
 		while(turn < 4)
 		{
 			int startingPlayerIndex = getActualPlayer();
-			
+			int rTurn = 1;
 			//System.out.println("starting=" + startingPlayerIndex + ", actual=" + getActualPlayer() + "\n");
 			do
 			{
 				Player actualPlayer = PlayersList.get(getNextPlayer());
-				actualPlayer.setBiddingStatus(maxBet);
+				
+				if(actualPlayer.folded || actualPlayer.allIn) continue;
+				//Ustawianie guzikow
 				if(actualPlayer.folded) continue;
+				if(checkTurnBets()) actualPlayer.enableButton(1);
+				if(checkTurnBets()) actualPlayer.enableButton(2);
+				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(3);
+				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(4);
+				actualPlayer.enableButton(5);
+				if(maxBet > actualPlayer.getActualBet() + actualPlayer.getChips()) actualPlayer.enableButton(6);
+				
+				
+				actualPlayer.setBiddingStatus(maxBet);
+				//if(actualPlayer.folded) continue;
 				String messageReceived = actualPlayer.playerConnector.receiveMessage();
 				System.out.println("otrzymano: " + messageReceived);
 				actualPlayer.setState(6);
@@ -177,12 +211,33 @@ public class Table
 				else if(messageReceived.equals("CHECK")) continue;
 				else if(messageReceived.equals("CALL"))
 				{
-					actualPlayer.setActualBet(maxBet);
+					actualPlayer.addToBet(maxBet - actualPlayer.getActualBet());
+					actualPlayer.modifyPlayer();
+				}
+				else if(messageReceived.contains("BET"))
+				{
+					int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
+					actualPlayer.addToBet(actualPlayerBet);
+					actualPlayer.modifyPlayer();
+					maxBet = actualPlayerBet;
+				}
+				else if(messageReceived.contains("RAISE"))
+				{
+					int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
+					actualPlayer.addToBet(actualPlayerBet);
+					actualPlayer.modifyPlayer();
+					maxBet = actualPlayerBet;
+				}
+				else if(messageReceived.equals("ALLIN"))
+				{
+					actualPlayer.addToBet(actualPlayer.getChips());
 					actualPlayer.modifyPlayer();
 				}
 				
+				
 			}
-			while(startingPlayerIndex != getActualPlayer());
+			while(!checkBets());
+			
 			if(turn == 1)
 			{
 				tableCards.add(deck.getFromTop());

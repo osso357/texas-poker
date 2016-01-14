@@ -132,6 +132,11 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		if(winnerIndex == this.PlayerIndex) sendMessage("M:Wygra³eœ!");
 		else sendMessage("M:Gracz " + winningPlayer.getNick() + " wygrywa runde!");
 	}
+
+	public void enableButton(int buttonIndex)
+	{
+		sendMessage("B:" + buttonIndex);
+	}
 	
 
 }
