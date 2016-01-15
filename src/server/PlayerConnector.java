@@ -87,22 +87,18 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	}
 	
 	@Override
-	public String receiveMessage() {
+	public String receiveMessage() throws IOException
+	{
 		String ret = null;
 		try {
 			ret = playerInputStream.readLine();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		}
 		return ret;
 	}
 
-	@Override
-	public void playerGainedChips(int chips) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public void sendPlayerCards(Card card1) {
 		// TODO Auto-generated method stub

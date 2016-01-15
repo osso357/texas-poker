@@ -153,7 +153,7 @@ public class Table
 		
 
 		
-		while(true)
+		while(PlayersList.size() > 1)
 		{
 			dealerButtonIndex = (dealerButtonIndex + 1 >= PlayersList.size()) ? 0 : dealerButtonIndex + 1;
 			Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
@@ -234,7 +234,16 @@ public class Table
 						
 						//actualPlayer.setBiddingStatus(maxBet);
 						//if(actualPlayer.folded) continue;
-						String messageReceived = actualPlayer.playerConnector.receiveMessage();
+						String messageReceived;
+						try
+						{ 
+							messageReceived = actualPlayer.playerConnector.receiveMessage();
+						}
+						catch(IOException e)
+						{
+							removePlayer(actualPlayer);
+							continue;
+						}
 						System.out.println("otrzymano: " + messageReceived);
 						actualPlayer.enableButton(7);
 						
@@ -257,6 +266,12 @@ public class Table
 								if(actualPlayerBet < 0) throw new NumberFormatException();
 							}
 							catch(NumberFormatException e)
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Nie poprawne dane!");
+								continue;
+							}
+							catch(ArrayIndexOutOfBoundsException e)
 							{
 								error = true;
 								actualPlayer.playerConnector.sendMessage("M:Nie poprawne dane!");
@@ -286,6 +301,13 @@ public class Table
 								actualPlayer.playerConnector.sendMessage("M:Nie poprawne dane!");
 								continue;
 							}
+							catch(ArrayIndexOutOfBoundsException e)
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Nie poprawne dane!");
+								continue;
+							}
+							
 							if(actualPlayerBet > actualPlayer.getChips())
 							{
 								error = true;
@@ -387,12 +409,16 @@ public class Table
 				player.allIn = false;
 				player.didMove = false;
 				player.setActualBet(0);
+				if(player.getChips() <= 0)
+				{
+					removePlayer(player);
+					player.playerConnector.sendMessage("Nie masz ju¿ ¿etonów. Odpadasz!");
+				}
 			}
 
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -401,23 +427,28 @@ public class Table
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
+		}
+		
+		PlayersList.get(0).playerConnector.sendMessage("Zwyciêzca! Gra zakoñczy sie za 10 sekund");
+		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
 	}
 	
 	private void removePlayer(Player player)
 	{
-		int chipsToGiveaway = player.getChips() / (PlayersList.size() - 1);
-		for(Player players : PlayersList)
-		{
-			if(players == player) continue;
-			player.giveChips(chipsToGiveaway);
-		}
-		player.changeNick("odszed³");
+		for(Player player2 : PlayersList) player2.playerConnector.changeNick(player, "odpad³");
+		player.setChips(0);
+		player.setActualBet(0);
+		player.modifyPlayer();
+		PlayersList.remove(player);
 		// TODO Auto-generated method stub
 		
 	}

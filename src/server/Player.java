@@ -58,11 +58,6 @@ public class Player
 		return this.Chips;
 	}
 	
-	public void giveChips(int chips)
-	{
-		setChips(Chips+chips);
-		playerConnector.playerGainedChips(chips);
-	}
 	
 	public void setChips(int chips)
 	{
