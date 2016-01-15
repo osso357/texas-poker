@@ -65,6 +65,7 @@ public class Table
 			PlayersList.add(player);
 			player.setNick();
 			player.setIndexNumber(PlayersList.indexOf(player));
+			player.setChips(Chips);
 			System.out.println("Dolaczyl gracz, nick: " + player.getNick());
 			
 			/*for(Player connectedPlayer : PlayersList)
@@ -80,12 +81,19 @@ public class Table
 		return true;
 	}
 	
-	public boolean checkBets()
+	public boolean checkIfBetsTheSame()
 	{
-		int playerBet = PlayersList.get(0).getActualBet();
+		int playerBet = 0;
 		for(Player player : PlayersList)
 		{
 			if(player.folded || player.allIn) continue;
+			playerBet = player.getActualBet();
+			break;
+		}
+		
+		for(Player player : PlayersList)
+		{
+			if(player.folded || player.allIn || player.getChips() == 0) continue;
 			if(playerBet != player.getActualBet()) return false;
 		}
 		return true;
@@ -100,40 +108,22 @@ public class Table
 		return true;
 	}
 	
-	public boolean checkTurnBets()
-	{
-		for(Player player : PlayersList)
-		{
-			if(player.getTurnBet() != 0) return false;
-		}
-		return true;
-	}
-	
 	public boolean allPlayersMoved()
 	{
+		int howManyPlayersLeft = PlayersList.size();
 		for(Player player : PlayersList)
 		{
-			if(!player.didMove) return false;
+			//if(player.folded || player.allIn) continue;
+			//if(!player.didMove) return false;
+			if(player.didMove) howManyPlayersLeft--;
 		}
+		if(howManyPlayersLeft > 1) return false;
 		return true;
 	}
 	
 	public void startGame()
 	{
 		System.out.println("Startuje gre");
-		
-		deck = new Deck();
-		deck.shuffleDeck();
-		
-		tableCards = new ArrayList<Card>();
-
-		int dealerButtonIndex = (int)(Math.floor(Math.random()*PlayersList.size()));
-		Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
-		
-		
-		setActualPlayer(dealerButtonIndex);
-		
-		for(Player player : PlayersList) player.setChips(Chips);
 		
 		for(Player player : PlayersList)
 		{
@@ -144,8 +134,15 @@ public class Table
 			}*/
 			player.playerConnector.sendInitialMessage();
 			System.out.println("SendInitialMessage");
-			
+		
 		}
+		int dealerButtonIndex = (int)(Math.floor(Math.random()*PlayersList.size()));
+		
+		
+		
+		
+
+		
 		
 		try {
 			Thread.sleep(500);
@@ -154,173 +151,216 @@ public class Table
 			e.printStackTrace();
 		}
 		
+
 		
-		
-		for(Player player : PlayersList)
+		while(true)
 		{
-			if(player == dealerButtonPlayer)
-			{
-				player.playerConnector.sendMessage("M:Otrzymujesz Dealer Button");
-				
-			}
-			else player.playerConnector.sendMessage("M:Gracz " + dealerButtonPlayer.getNick() + " otrzymuje Dealer Button");
+			dealerButtonIndex = (dealerButtonIndex + 1 >= PlayersList.size()) ? 0 : dealerButtonIndex + 1;
+			Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
+			setActualPlayer(dealerButtonIndex);
 			
-			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
+			deck = new Deck();
+			deck.shuffleDeck();
 			
-			Card card1, card2;
-			card1 = deck.getFromTop();
-			card2 = deck.getFromTop();
-			player.addCards(card1, card2, tableCards);
-		}
-		
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		PlayersList.get(getNextPlayer()).addToBet(SmallBlind);
-		PlayersList.get(getActualPlayer()).modifyPlayer();
-		PlayersList.get(getNextPlayer()).addToBet(BigBlind);
-		PlayersList.get(getActualPlayer()).modifyPlayer();
-		
-		maxBet = BigBlind;
-		
-		for(Player player : PlayersList)
-		{
-			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
-			player.enableButton(7);
-		}
-		
-		//Licytacja
-		
-		int turn = 1;
-		while(turn < 5)
-		{
-			int startingPlayerIndex = getActualPlayer();
-			//System.out.println("starting=" + startingPlayerIndex + ", actual=" + getActualPlayer() + "\n");
-			do
+			tableCards = new ArrayList<Card>();
+			for(Player player : PlayersList)
 			{
-				Player actualPlayer = PlayersList.get(getNextPlayer());
-				
-				if(actualPlayer.folded || actualPlayer.allIn) continue;
-				//Ustawianie guzikow
-				//if(actualPlayer.folded) continue;
-				
-				//check
-				if(checkIfBetsZero()) actualPlayer.enableButton(1);
-				//Bet
-				if(checkIfBetsZero()) actualPlayer.enableButton(2);
-				//Raise
-				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(3);
-				//Call
-				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(4);
-				//fold
-				actualPlayer.enableButton(5);
-				//AllIn
-				if(maxBet > actualPlayer.getActualBet() + actualPlayer.getChips()) actualPlayer.enableButton(6);
-				
-				
-				//actualPlayer.setBiddingStatus(maxBet);
-				//if(actualPlayer.folded) continue;
-				String messageReceived = actualPlayer.playerConnector.receiveMessage();
-				System.out.println("otrzymano: " + messageReceived);
-				actualPlayer.enableButton(7);
-				
-				if(messageReceived.equals("FOLD")){
-					actualPlayer.folded = true;
-					System.out.println(actualPlayer.getNick() + " zfoldowal");
-				}
-				else if(messageReceived.equals("CHECK")) continue;
-				else if(messageReceived.equals("CALL"))
+				if(player == dealerButtonPlayer)
 				{
-					actualPlayer.addToBet(maxBet - actualPlayer.getActualBet());
-					actualPlayer.modifyPlayer();
+					player.playerConnector.sendMessage("M:Otrzymujesz Dealer Button");
+					
 				}
-				else if(messageReceived.contains("BET"))
-				{
-					int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
-					actualPlayer.addToBet(actualPlayerBet);
-					actualPlayer.modifyPlayer();
-					maxBet = actualPlayerBet;
-				}
-				else if(messageReceived.contains("RAISE"))
-				{
-					int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
-					actualPlayer.addToBet(actualPlayerBet);
-					actualPlayer.modifyPlayer();
-					maxBet = actualPlayerBet;
-				}
-				else if(messageReceived.equals("ALLIN"))
-				{
-					actualPlayer.addToBet(actualPlayer.getChips());
-					actualPlayer.modifyPlayer();
-				}
-				actualPlayer.didMove = true;
-				actualPlayer.modifyPlayer();
+				else player.playerConnector.sendMessage("M:Gracz " + dealerButtonPlayer.getNick() + " otrzymuje Dealer Button");
+
+				for(Player player2 : PlayersList) player2.playerConnector.changeNick(player2, player2.getNick());
+				player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
 				
+				
+				Card card1, card2;
+				card1 = deck.getFromTop();
+				card2 = deck.getFromTop();
+				player.addCards(card1, card2, tableCards);
 			}
-			while(!checkBets() && !allPlayersMoved());
+			
+			PlayersList.get(getNextPlayer()).addToBet(SmallBlind);
+			PlayersList.get(getActualPlayer()).modifyPlayer();
+			PlayersList.get(getActualPlayer()).didMove = true;
+			PlayersList.get(getNextPlayer()).addToBet(BigBlind);
+			PlayersList.get(getActualPlayer()).modifyPlayer();
+			PlayersList.get(getActualPlayer()).didMove = true;
+			
+			maxBet = BigBlind;
 			
 			for(Player player : PlayersList)
 			{
-				pot += player.getActualBet();
-				player.setActualBet(0);
-				maxBet = 0;
-				player.didMove = false;
+				player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
+				player.enableButton(7);
 			}
 			
-			for(Player player : PlayersList)
-			{
-				player.modifyPlayer();
-				player.playerConnector.sendMessage("M:Pula wynosi " + pot + " ¿etonów");
-			}
+			//Licytacja
 			
-			if(turn == 1)
+			int turn = 1;
+			while(turn < 5)
 			{
-				tableCards.add(deck.getFromTop());
-				tableCards.add(deck.getFromTop());
-			}
-			if(turn < 4)
-			{
-				tableCards.add(deck.getFromTop());
+				int startingPlayerIndex = getActualPlayer();
+				//System.out.println("starting=" + startingPlayerIndex + ", actual=" + getActualPlayer() + "\n");
+	
+				System.out.println("checkBets = " + checkIfBetsTheSame() + ", allPM = " + allPlayersMoved());
+				while(!(checkIfBetsTheSame() && allPlayersMoved()))
+				{
+					System.out.println("maxBet = " + maxBet);
+					Player actualPlayer = PlayersList.get(getNextPlayer());
+					
+					if(actualPlayer.folded || actualPlayer.allIn) continue;
+					//Ustawianie guzikow
+					//if(actualPlayer.folded) continue;
+					
+					//check
+					if(checkIfBetsZero()) actualPlayer.enableButton(1);
+					//Bet
+					if(checkIfBetsZero() && actualPlayer.getChips() > 0) actualPlayer.enableButton(2);
+					//Raise
+					if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() > maxBet - actualPlayer.getActualBet()) actualPlayer.enableButton(3);
+					//Call
+					if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() >= maxBet - actualPlayer.getActualBet()) actualPlayer.enableButton(4);
+					//fold
+					actualPlayer.enableButton(5);
+					//AllIn
+					if(maxBet - actualPlayer.getActualBet() > actualPlayer.getChips()) actualPlayer.enableButton(6);
+					
+					
+					//actualPlayer.setBiddingStatus(maxBet);
+					//if(actualPlayer.folded) continue;
+					String messageReceived = actualPlayer.playerConnector.receiveMessage();
+					System.out.println("otrzymano: " + messageReceived);
+					actualPlayer.enableButton(7);
+					
+					if(messageReceived.equals("FOLD")){
+						actualPlayer.folded = true;
+						System.out.println(actualPlayer.getNick() + " zfoldowal");
+					}
+					//else if(messageReceived.equals("CHECK")) continue;
+					else if(messageReceived.equals("CALL"))
+					{
+						actualPlayer.addToBet(maxBet - actualPlayer.getActualBet());
+						actualPlayer.modifyPlayer();
+					}
+					else if(messageReceived.contains("BET"))
+					{
+						int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
+						actualPlayer.addToBet(actualPlayerBet);
+						actualPlayer.modifyPlayer();
+						maxBet = actualPlayer.getActualBet();
+					}
+					else if(messageReceived.contains("RAISE"))
+					{
+						int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
+						actualPlayer.addToBet(actualPlayerBet);
+						actualPlayer.modifyPlayer();
+						maxBet = actualPlayer.getActualBet();
+					}
+					else if(messageReceived.equals("ALLIN"))
+					{
+						actualPlayer.addToBet(actualPlayer.getChips());
+						actualPlayer.allIn = true;
+						actualPlayer.modifyPlayer();
+					}
+					actualPlayer.didMove = true;
+					actualPlayer.modifyPlayer();
+				}
+				
+				
 				for(Player player : PlayersList)
 				{
-					if(turn == 1)
-					{
-						player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 3));
-						player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 2));;
-					}
-					player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 1));
+					pot += player.getActualBet();
+					if(!player.allIn) player.setActualBet(0);
+					maxBet = 0;
+					player.didMove = (player.allIn || player.folded) ? true : false;
 				}
+				
+				for(Player player : PlayersList)
+				{
+					player.modifyPlayer();
+					player.playerConnector.sendMessage("M:Pula wynosi " + pot + " ¿etonów");
+				}
+				
+				if(turn == 1)
+				{
+					tableCards.add(deck.getFromTop());
+					tableCards.add(deck.getFromTop());
+				}
+				if(turn < 4)
+				{
+					tableCards.add(deck.getFromTop());
+					for(Player player : PlayersList)
+					{
+						if(turn == 1)
+						{
+							player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 3));
+							player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 2));;
+						}
+						player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 1));
+					}
+				}
+				turn++;
 			}
-			turn++;
+			//dealerButtonPlayer.playerConnector.
+			
+			for(Player player : PlayersList)
+			{
+				if(!player.folded) player.evaluateHand();
+				else player.getHand().handValue = new int[]{0,0,0,0,0,0};
+			}
+			
+			Player winningPlayer = PlayersList.get(0);
+			boolean tie = false;
+			List<Player> tiePlayers = new ArrayList<Player>();
+			
+			for(int i = 1; i < PlayersList.size(); i++)
+			{
+				Player comparingPlayer = PlayersList.get(i); 
+				if(comparingPlayer == winningPlayer) continue;
+				if(winningPlayer.getHand().compareTo(comparingPlayer.getHand()) < 0) winningPlayer = comparingPlayer;
+			}
+
+			if(!winningPlayer.allIn)
+			{
+				winningPlayer.setChips(winningPlayer.getChips() + pot);
+				pot = 0;
+			}
+			else
+			{
+				winningPlayer.setChips(winningPlayer.getChips() + pot - (PlayersList.size() * winningPlayer.getActualBet()));
+				pot -= (PlayersList.size() * winningPlayer.getActualBet());
+			}
+			winningPlayer.modifyPlayer();
+			
+			for(Player player : PlayersList)
+			{
+				player.playerConnector.sendWinner(winningPlayer);
+				player.folded = false;
+				player.allIn = false;
+				player.didMove = false;
+				player.setActualBet(0);
+			}
+
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			for(Player player : PlayersList) player.playerConnector.clearCards();
+			
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
-		//dealerButtonPlayer.playerConnector.
-		
-		for(Player player : PlayersList)
-		{
-			player.evaluateHand();
-		}
-		
-		Player winningPlayer = PlayersList.get(0);
-		
-		for(int i = 1; i < PlayersList.size(); i++)
-		{
-			Player comparingPlayer = PlayersList.get(i); 
-			if(winningPlayer.getHand().compareTo(comparingPlayer.getHand()) < 0) winningPlayer = comparingPlayer;
-		}
-		
-		for(Player player : PlayersList)
-		{
-			player.playerConnector.sendWinner(winningPlayer);
-		}
-		winningPlayer.setChips(winningPlayer.getChips() + pot);
-		winningPlayer.modifyPlayer();
-		pot = 0;
-		
-		while(true);
 		
 	}
 	

@@ -11,19 +11,8 @@ public class Player
 	private int actualBet;
 	private int indexNumber;
 	private int state;
-	private int turnBet = 0;
 	public PlayerConnector playerConnector;
 	public boolean folded = false, allIn = false, didMove = false;
-	
-	public int getTurnBet()
-	{
-		return turnBet;
-	}
-	
-	public void setTurnBet(int turnBet)
-	{
-		this.turnBet = turnBet;
-	}
 	
 	
 	public void setState(int state)

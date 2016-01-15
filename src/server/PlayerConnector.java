@@ -137,6 +137,11 @@ public class PlayerConnector implements PlayerConnectorAdapter
 	{
 		sendMessage("B:" + buttonIndex);
 	}
+
+	public void clearCards()
+	{
+		sendMessage("CLR");
+	}
 	
 
 }
