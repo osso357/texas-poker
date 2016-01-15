@@ -23,17 +23,33 @@ public class BetPanel extends JPanel {
 	Border blackline;
 	TitledBorder border;
 	
-	JButton fold;
-	JButton call;
-	JButton bet;
-	JButton check;
-	JButton raise;
-	JButton allin;
+	JButton[] buttons;
 	JTextField amount;
 	JLabel notPossible;
 	Game game;
 
-	public void setState(int state)
+	
+	public void turnButtonOn(int buttonIndex)
+	{
+		notPossible.setVisible(false);
+		buttons[buttonIndex-1].setVisible(true);
+		if (buttonIndex == 2 || buttonIndex == 3)
+		{
+			amount.setVisible(true);
+		}
+	}
+	
+	public void turnButtonsOff()
+	{
+		amount.setVisible(false);
+		for (int i = 0; i < 6; i++)
+		{
+			buttons[i].setVisible(false);;
+		}
+		notPossible.setVisible(true);
+	}
+	
+	/*public void setState(int state) //stary tryb zmiany stanów przycisków
 	{
 		if (state == 1)
 		{
@@ -101,7 +117,7 @@ public class BetPanel extends JPanel {
 			fold.setVisible(false);
 			notPossible.setVisible(true);
 		}
-	}
+	}*/
 	
 	public BetPanel(Game currentgame, WindowActions listener) {
 		//Game game = currentgame;
@@ -110,46 +126,42 @@ public class BetPanel extends JPanel {
 		border = BorderFactory.createTitledBorder("OPCJE LICYTACJI");
 		setBorder(border);
 		border.setTitleJustification(TitledBorder.LEFT);
+		buttons = new JButton[6];
 		
 		setPreferredSize(new Dimension(700,60));
-		fold = new JButton("Fold");
-		fold.setActionCommand("Fold");
-		fold.addActionListener(listener);
-		bet = new JButton("Bet");
-		bet.setActionCommand("Bet");
-		bet.addActionListener(listener);
-		check = new JButton("Check");
-		check.setActionCommand("Check");
-		check.addActionListener(listener);
-		call = new JButton("Call");
-		call.setActionCommand("Call");
-		call.addActionListener(listener);
-		raise = new JButton("Raise");
-		raise.setActionCommand("Raise");
-		raise.addActionListener(listener);
-		allin = new JButton("All-In");
-		allin.setActionCommand("All-In");
-		allin.addActionListener(listener);
+		buttons[4] = new JButton("Fold");
+		buttons[4].setActionCommand("Fold");
+		buttons[4].addActionListener(listener);
+		buttons[1] = new JButton("Bet");
+		buttons[1].setActionCommand("Bet");
+		buttons[1].addActionListener(listener);
+		buttons[0] = new JButton("Check");
+		buttons[0].setActionCommand("Check");
+		buttons[0].addActionListener(listener);
+		buttons[3] = new JButton("Call");
+		buttons[3].setActionCommand("Call");
+		buttons[3].addActionListener(listener);
+		buttons[2] = new JButton("Raise");
+		buttons[2].setActionCommand("Raise");
+		buttons[2].addActionListener(listener);
+		buttons[5] = new JButton("All-In");
+		buttons[5].setActionCommand("All-In");
+		buttons[5].addActionListener(listener);
 		amount = new JTextField(20);
 		notPossible = new JLabel("Nie możesz licytować w tej chwili");
 		
-		
 		add(amount);
-		add(raise);
-		add(check);
-		add(call);
-		add(bet);
-		add(allin);
-		add(fold);
+		for (int i = 0; i < 6; i++)
+		{
+			add(buttons[i]);
+		}
 		add(notPossible);
 		
 		amount.setVisible(false);
-		raise.setVisible(false);
-		check.setVisible(false);
-		call.setVisible(false);
-		bet.setVisible(false);
-		allin.setVisible(false);
-		fold.setVisible(false);
+		for (int i = 0; i < 6; i++)
+		{
+			buttons[i].setVisible(false);;
+		}
 		notPossible.setVisible(true);
 		setVisible(true);
 	}

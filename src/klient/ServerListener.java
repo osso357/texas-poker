@@ -57,10 +57,17 @@ class ServerListener extends Thread{
 				game.clearCards(); //wyzeruj karty
 				client.gamewin.cards.update();
 			}
-			else if (mtable[0].equals("L")) { //licytacja
-				client.gamewin.bet.setState(Integer.parseInt(mtable[1]));
+			else if (mtable[0].equals("B")) { //licytacja
+				if(Integer.parseInt(mtable[1]) == 6)
+				{
+					client.gamewin.bet.turnButtonsOff();
+				}
+				else
+				{
+					client.gamewin.bet.turnButtonOn(Integer.parseInt(mtable[1]));
+				}
 			}
-			else if (mtable[0].equals("E")) { //Błąd wymuszający konie gry E:[komunikat]
+			else if (mtable[0].equals("E")) { //Błąd wymuszający koniec gry E:[komunikat]
 				if(client.gamewin != null)
 				{
 					client.gamewin.setVisible(false);
