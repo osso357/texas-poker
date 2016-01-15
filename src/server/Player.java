@@ -9,10 +9,11 @@ public class Player
 	private String nick;
 	private int Chips;
 	private int actualBet;
+	public int allInBet;
 	private int indexNumber;
 	private int state;
 	public PlayerConnector playerConnector;
-	public boolean folded = false, allIn = false, didMove = false;
+	public boolean folded = false, allIn = false, didMove = false, inGame = true;
 	
 	
 	public void setState(int state)

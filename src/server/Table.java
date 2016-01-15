@@ -30,6 +30,7 @@ public class Table
 	{
 		actualPlayer++;
 		if(actualPlayer >= PlayersList.size()) actualPlayer = 0;
+		if(!PlayersList.get(actualPlayer).inGame && playersLeft() > 1) actualPlayer = getNextPlayer(); 
 		return actualPlayer;
 	}
 	
@@ -68,14 +69,7 @@ public class Table
 			player.setChips(Chips);
 			System.out.println("Dolaczyl gracz, nick: " + player.getNick());
 			
-			/*for(Player connectedPlayer : PlayersList)
-			{
-				if(!connectedPlayer.isConnected())
-				{
-					System.out.println("Gracz " + connectedPlayer.getNick() + " odszedl");
-					PlayersList.remove(connectedPlayer);
-				}
-			}*/
+			
 		}
 		
 		return true;
@@ -111,14 +105,26 @@ public class Table
 	public boolean allPlayersMoved()
 	{
 		int howManyPlayersLeft = PlayersList.size();
+		int foldedPlayers = 0;
 		for(Player player : PlayersList)
 		{
-			//if(player.folded || player.allIn) continue;
+			if(player.folded || player.allIn) foldedPlayers++;
 			//if(!player.didMove) return false;
 			if(player.didMove) howManyPlayersLeft--;
 		}
-		if(howManyPlayersLeft > 1) return false;
+		if(foldedPlayers >= PlayersList.size() - 1) return true;
+		if(howManyPlayersLeft >= 1) return false;
 		return true;
+	}
+	
+	public int playersLeft()
+	{
+		int inGame = 0;
+		for(Player player : PlayersList)
+		{
+			if(player.inGame) inGame++;
+		}
+		return inGame;
 	}
 	
 	public void startGame()
@@ -153,10 +159,11 @@ public class Table
 		
 
 		
-		while(PlayersList.size() > 1)
+		while(playersLeft() > 1)
 		{
 			dealerButtonIndex = (dealerButtonIndex + 1 >= PlayersList.size()) ? 0 : dealerButtonIndex + 1;
 			Player dealerButtonPlayer = PlayersList.get(dealerButtonIndex);
+			
 			setActualPlayer(dealerButtonIndex);
 			
 			deck = new Deck();
@@ -170,9 +177,13 @@ public class Table
 					player.playerConnector.sendMessage("M:Otrzymujesz Dealer Button");
 					
 				}
-				else player.playerConnector.sendMessage("M:Gracz " + dealerButtonPlayer.getNick() + " otrzymuje Dealer Button");
+				else if(player.inGame) player.playerConnector.sendMessage("M:Gracz " + dealerButtonPlayer.getNick() + " otrzymuje Dealer Button");
 
-				for(Player player2 : PlayersList) player.playerConnector.changeNick(player2, player2.getNick());
+				for(Player player2 : PlayersList)
+				{
+					if(player2.inGame) player.playerConnector.changeNick(player2, player2.getNick());
+					else player.playerConnector.changeNick(player2, "odpad≈Ç");
+				}
 				player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
 				
 				
@@ -182,20 +193,29 @@ public class Table
 				player.addCards(card1, card2, tableCards);
 			}
 			
-			PlayersList.get(getNextPlayer()).addToBet(SmallBlind);
+			if(PlayersList.get(getNextPlayer()).getChips() < SmallBlind)
+			{
+				removePlayer(PlayersList.get(getActualPlayer()));
+				continue;
+			}
+			
+			PlayersList.get(getActualPlayer()).addToBet(SmallBlind);
 			PlayersList.get(getActualPlayer()).modifyPlayer();
 			PlayersList.get(getActualPlayer()).didMove = true;
-			PlayersList.get(getNextPlayer()).addToBet(BigBlind);
+			
+			if(PlayersList.get(getNextPlayer()).getChips() < BigBlind)
+			{
+				removePlayer(PlayersList.get(getActualPlayer()));
+				continue;
+			}
+			
+			PlayersList.get(getActualPlayer()).addToBet(BigBlind);
 			PlayersList.get(getActualPlayer()).modifyPlayer();
 			PlayersList.get(getActualPlayer()).didMove = true;
 			
 			maxBet = BigBlind;
 			
-			for(Player player : PlayersList)
-			{
-				player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
-				player.enableButton(7);
-			}
+			
 			
 			//Licytacja
 			
@@ -209,10 +229,24 @@ public class Table
 				while(!(checkIfBetsTheSame() && allPlayersMoved()))
 				{
 					boolean error = false;
-					System.out.println("maxBet = " + maxBet);
+					
 					Player actualPlayer = PlayersList.get(getNextPlayer());
 					
-					if(actualPlayer.folded || actualPlayer.allIn) continue;
+					if(actualPlayer.folded || actualPlayer.allIn || !actualPlayer.inGame) continue;
+
+					for(Player player : PlayersList)
+					{
+						String dbchar = "";
+						String apchar = "";
+						if(dealerButtonPlayer == player) dbchar = "@";
+						if(actualPlayer == player) apchar = "> ";
+						for(Player player2 : PlayersList)
+						{
+							if(player.inGame) player2.playerConnector.changeNick(player, apchar + dbchar + player.getNick());
+							else player2.playerConnector.changeNick(player, "odpad≈Ç");
+						}
+						player.enableButton(7);
+					}
 					
 					do
 					//Ustawianie guzikow
@@ -242,14 +276,14 @@ public class Table
 						catch(IOException e)
 						{
 							removePlayer(actualPlayer);
+							
 							continue;
 						}
-						System.out.println("otrzymano: " + messageReceived);
+
 						actualPlayer.enableButton(7);
 						
 						if(messageReceived.equals("FOLD")){
 							actualPlayer.folded = true;
-							System.out.println(actualPlayer.getNick() + " zfoldowal");
 						}
 						//else if(messageReceived.equals("CHECK")) continue;
 						else if(messageReceived.equals("CALL"))
@@ -280,7 +314,7 @@ public class Table
 							if(actualPlayerBet > actualPlayer.getChips())
 							{
 								error = true;
-								actualPlayer.playerConnector.sendMessage("M:Nie masz tyle øetonÛw!");
+								actualPlayer.playerConnector.sendMessage("M:Nie masz tyle ≈ºeton√≥w!");
 								continue;
 							}
 							actualPlayer.addToBet(actualPlayerBet);
@@ -311,13 +345,13 @@ public class Table
 							if(actualPlayerBet > actualPlayer.getChips())
 							{
 								error = true;
-								actualPlayer.playerConnector.sendMessage("M:Nie masz tyle øetonÛw!");
+								actualPlayer.playerConnector.sendMessage("M:Nie masz tyle ≈ºeton√≥w!");
 								continue;
 							}
 							else if(actualPlayerBet < maxBet)
 							{
 								error = true;
-								actualPlayer.playerConnector.sendMessage("M:Musisz przebiÊ maksymalny zak≥ad!");
+								actualPlayer.playerConnector.sendMessage("M:Musisz przebiƒá maksymalny zak≈Çad!");
 								continue;
 							}
 							actualPlayer.addToBet(actualPlayerBet);
@@ -326,8 +360,13 @@ public class Table
 						}
 						else if(messageReceived.equals("ALLIN"))
 						{
+							actualPlayer.allInBet = actualPlayer.getChips();
 							actualPlayer.addToBet(actualPlayer.getChips());
 							actualPlayer.allIn = true;
+							actualPlayer.modifyPlayer();
+						}
+						else if(messageReceived.equals("CHECK"))
+						{
 							actualPlayer.modifyPlayer();
 						}
 					}
@@ -340,7 +379,7 @@ public class Table
 				for(Player player : PlayersList)
 				{
 					pot += player.getActualBet();
-					if(!player.allIn) player.setActualBet(0);
+					player.setActualBet(0);
 					maxBet = 0;
 					player.didMove = (player.allIn || player.folded) ? true : false;
 				}
@@ -348,7 +387,7 @@ public class Table
 				for(Player player : PlayersList)
 				{
 					player.modifyPlayer();
-					player.playerConnector.sendMessage("M:Pula wynosi " + pot + " øetonÛw");
+					if(player.inGame) player.playerConnector.sendMessage("M:Pula wynosi " + pot + " ≈ºeton√≥w");
 				}
 				
 				if(turn == 1)
@@ -389,16 +428,34 @@ public class Table
 				if(comparingPlayer == winningPlayer) continue;
 				if(winningPlayer.getHand().compareTo(comparingPlayer.getHand()) < 0) winningPlayer = comparingPlayer;
 			}
-
+			
+			for(Player player : PlayersList)
+			{
+				if(player == winningPlayer) continue;
+				if(winningPlayer.getHand().compareTo(player.getHand()) == 0)
+				{
+					tie = true;
+					tiePlayers.add(player);
+				}
+			}
+			
 			if(!winningPlayer.allIn)
 			{
-				winningPlayer.setChips(winningPlayer.getChips() + pot);
+				if(tie)
+				{
+					int gain = (pot / (tiePlayers.size() + 1));
+					winningPlayer.setChips(winningPlayer.getChips() + gain);
+					for(Player player : tiePlayers) player.setChips(winningPlayer.getChips() + gain);
+				}
+				else winningPlayer.setChips(winningPlayer.getChips() + pot);
 				pot = 0;
 			}
 			else
 			{
-				winningPlayer.setChips(winningPlayer.getChips() + pot - (PlayersList.size() * winningPlayer.getActualBet()));
-				pot -= (PlayersList.size() * winningPlayer.getActualBet());
+				winningPlayer.setChips(pot - ((playersLeft() - 1) * winningPlayer.getActualBet()));
+				pot -= ((playersLeft() - 1) * winningPlayer.getActualBet());
+				
+				winningPlayer.setActualBet(0);
 			}
 			winningPlayer.modifyPlayer();
 			
@@ -409,10 +466,15 @@ public class Table
 				player.allIn = false;
 				player.didMove = false;
 				player.setActualBet(0);
+			}
+			
+			for(Player player : PlayersList)
+			{
 				if(player.getChips() <= 0)
 				{
 					removePlayer(player);
-					player.playerConnector.sendMessage("Nie masz juø øetonÛw. Odpadasz!");
+					player.playerConnector.sendMessage("M:Nie masz ju≈º ≈ºeton√≥w. Odpadasz!");
+					break;
 				}
 			}
 
@@ -432,7 +494,11 @@ public class Table
 			
 		}
 		
-		PlayersList.get(0).playerConnector.sendMessage("ZwyciÍzca! Gra zakoÒczy sie za 10 sekund");
+		for(Player player : PlayersList)
+		{
+			if(player.getChips() > 0) player.playerConnector.sendMessage("M:Zwyciƒôzca! Gra zako≈Ñczy sie za 10 sekund");
+			else player.playerConnector.sendMessage("M:Przegra≈Çe≈õ! Gra zako≈Ñczy sie za 10 sekund");
+		}
 		
 		try {
 			Thread.sleep(10000);
@@ -444,11 +510,12 @@ public class Table
 	
 	private void removePlayer(Player player)
 	{
-		for(Player player2 : PlayersList) player2.playerConnector.changeNick(player, "odpad≥");
+		for(Player player2 : PlayersList) player2.playerConnector.changeNick(player, "odpad≈Ç");
 		player.setChips(0);
 		player.setActualBet(0);
 		player.modifyPlayer();
-		PlayersList.remove(player);
+		player.inGame = false;
+		//PlayersList.remove(player);
 		// TODO Auto-generated method stub
 		
 	}
@@ -486,7 +553,7 @@ public class Table
 		else
 		{
 			/* Domyslne parametry wejsciowe */
-			s.PlayersNumber = 4;
+			s.PlayersNumber = 3;
 			s.Chips = 5000;
 			s.SmallBlind = 200;
 			s.BigBlind = 555;
