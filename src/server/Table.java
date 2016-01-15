@@ -172,7 +172,7 @@ public class Table
 				}
 				else player.playerConnector.sendMessage("M:Gracz " + dealerButtonPlayer.getNick() + " otrzymuje Dealer Button");
 
-				for(Player player2 : PlayersList) player2.playerConnector.changeNick(player2, player2.getNick());
+				for(Player player2 : PlayersList) player.playerConnector.changeNick(player2, player2.getNick());
 				player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
 				
 				
@@ -208,63 +208,108 @@ public class Table
 				System.out.println("checkBets = " + checkIfBetsTheSame() + ", allPM = " + allPlayersMoved());
 				while(!(checkIfBetsTheSame() && allPlayersMoved()))
 				{
+					boolean error = false;
 					System.out.println("maxBet = " + maxBet);
 					Player actualPlayer = PlayersList.get(getNextPlayer());
 					
 					if(actualPlayer.folded || actualPlayer.allIn) continue;
+					
+					do
 					//Ustawianie guzikow
-					//if(actualPlayer.folded) continue;
-					
-					//check
-					if(checkIfBetsZero()) actualPlayer.enableButton(1);
-					//Bet
-					if(checkIfBetsZero() && actualPlayer.getChips() > 0) actualPlayer.enableButton(2);
-					//Raise
-					if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() > maxBet - actualPlayer.getActualBet()) actualPlayer.enableButton(3);
-					//Call
-					if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() >= maxBet - actualPlayer.getActualBet()) actualPlayer.enableButton(4);
-					//fold
-					actualPlayer.enableButton(5);
-					//AllIn
-					if(maxBet - actualPlayer.getActualBet() > actualPlayer.getChips()) actualPlayer.enableButton(6);
-					
-					
-					//actualPlayer.setBiddingStatus(maxBet);
-					//if(actualPlayer.folded) continue;
-					String messageReceived = actualPlayer.playerConnector.receiveMessage();
-					System.out.println("otrzymano: " + messageReceived);
-					actualPlayer.enableButton(7);
-					
-					if(messageReceived.equals("FOLD")){
-						actualPlayer.folded = true;
-						System.out.println(actualPlayer.getNick() + " zfoldowal");
-					}
-					//else if(messageReceived.equals("CHECK")) continue;
-					else if(messageReceived.equals("CALL"))
 					{
-						actualPlayer.addToBet(maxBet - actualPlayer.getActualBet());
-						actualPlayer.modifyPlayer();
+						error = false;
+						//check
+						if(checkIfBetsZero()) actualPlayer.enableButton(1);
+						//Bet
+						if(checkIfBetsZero() && actualPlayer.getChips() > 0) actualPlayer.enableButton(2);
+						//Raise
+						if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() > maxBet - actualPlayer.getActualBet()) actualPlayer.enableButton(3);
+						//Call
+						if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() >= maxBet - actualPlayer.getActualBet()) actualPlayer.enableButton(4);
+						//fold
+						actualPlayer.enableButton(5);
+						//AllIn
+						if(maxBet - actualPlayer.getActualBet() > actualPlayer.getChips()) actualPlayer.enableButton(6);
+						
+						
+						//actualPlayer.setBiddingStatus(maxBet);
+						//if(actualPlayer.folded) continue;
+						String messageReceived = actualPlayer.playerConnector.receiveMessage();
+						System.out.println("otrzymano: " + messageReceived);
+						actualPlayer.enableButton(7);
+						
+						if(messageReceived.equals("FOLD")){
+							actualPlayer.folded = true;
+							System.out.println(actualPlayer.getNick() + " zfoldowal");
+						}
+						//else if(messageReceived.equals("CHECK")) continue;
+						else if(messageReceived.equals("CALL"))
+						{
+							actualPlayer.addToBet(maxBet - actualPlayer.getActualBet());
+							actualPlayer.modifyPlayer();
+						}
+						else if(messageReceived.contains("BET"))
+						{
+							int actualPlayerBet;
+							try
+							{
+								actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
+								if(actualPlayerBet < 0) throw new NumberFormatException();
+							}
+							catch(NumberFormatException e)
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Nie poprawne dane!");
+								continue;
+							}
+							if(actualPlayerBet > actualPlayer.getChips())
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Nie masz tyle ¿etonów!");
+								continue;
+							}
+							actualPlayer.addToBet(actualPlayerBet);
+							actualPlayer.modifyPlayer();
+							maxBet = actualPlayer.getActualBet();
+						}
+						else if(messageReceived.contains("RAISE"))
+						{
+							int actualPlayerBet;
+							try
+							{
+								actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
+								if(actualPlayerBet < 0) throw new NumberFormatException();
+							}
+							catch(NumberFormatException e)
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Nie poprawne dane!");
+								continue;
+							}
+							if(actualPlayerBet > actualPlayer.getChips())
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Nie masz tyle ¿etonów!");
+								continue;
+							}
+							else if(actualPlayerBet < maxBet)
+							{
+								error = true;
+								actualPlayer.playerConnector.sendMessage("M:Musisz przebiæ maksymalny zak³ad!");
+								continue;
+							}
+							actualPlayer.addToBet(actualPlayerBet);
+							actualPlayer.modifyPlayer();
+							maxBet = actualPlayer.getActualBet();
+						}
+						else if(messageReceived.equals("ALLIN"))
+						{
+							actualPlayer.addToBet(actualPlayer.getChips());
+							actualPlayer.allIn = true;
+							actualPlayer.modifyPlayer();
+						}
 					}
-					else if(messageReceived.contains("BET"))
-					{
-						int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
-						actualPlayer.addToBet(actualPlayerBet);
-						actualPlayer.modifyPlayer();
-						maxBet = actualPlayer.getActualBet();
-					}
-					else if(messageReceived.contains("RAISE"))
-					{
-						int actualPlayerBet = Integer.parseInt(messageReceived.split(":")[1]);
-						actualPlayer.addToBet(actualPlayerBet);
-						actualPlayer.modifyPlayer();
-						maxBet = actualPlayer.getActualBet();
-					}
-					else if(messageReceived.equals("ALLIN"))
-					{
-						actualPlayer.addToBet(actualPlayer.getChips());
-						actualPlayer.allIn = true;
-						actualPlayer.modifyPlayer();
-					}
+					while(error);
 					actualPlayer.didMove = true;
 					actualPlayer.modifyPlayer();
 				}
@@ -410,7 +455,7 @@ public class Table
 		else
 		{
 			/* Domyslne parametry wejsciowe */
-			s.PlayersNumber = 2;
+			s.PlayersNumber = 4;
 			s.Chips = 5000;
 			s.SmallBlind = 200;
 			s.BigBlind = 555;
