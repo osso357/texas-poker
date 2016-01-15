@@ -58,7 +58,7 @@ class ServerListener extends Thread{
 				client.gamewin.cards.update();
 			}
 			else if (mtable[0].equals("B")) { //licytacja
-				if(Integer.parseInt(mtable[1]) == 6)
+				if(Integer.parseInt(mtable[1]) == 7)
 				{
 					client.gamewin.bet.turnButtonsOff();
 				}

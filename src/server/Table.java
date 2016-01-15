@@ -91,11 +91,29 @@ public class Table
 		return true;
 	}
 	
+	public boolean checkIfBetsZero()
+	{
+		for(Player player : PlayersList)
+		{
+			if(player.getActualBet() != 0) return false;
+		}
+		return true;
+	}
+	
 	public boolean checkTurnBets()
 	{
 		for(Player player : PlayersList)
 		{
 			if(player.getTurnBet() != 0) return false;
+		}
+		return true;
+	}
+	
+	public boolean allPlayersMoved()
+	{
+		for(Player player : PlayersList)
+		{
+			if(!player.didMove) return false;
 		}
 		return true;
 	}
@@ -172,16 +190,15 @@ public class Table
 		for(Player player : PlayersList)
 		{
 			player.playerConnector.changeNick(dealerButtonPlayer, "@" + dealerButtonPlayer.getNick());
-			player.setState(6);
+			player.enableButton(7);
 		}
 		
 		//Licytacja
 		
 		int turn = 1;
-		while(turn < 4)
+		while(turn < 5)
 		{
 			int startingPlayerIndex = getActualPlayer();
-			int rTurn = 1;
 			//System.out.println("starting=" + startingPlayerIndex + ", actual=" + getActualPlayer() + "\n");
 			do
 			{
@@ -192,9 +209,9 @@ public class Table
 				//if(actualPlayer.folded) continue;
 				
 				//check
-				if((checkTurnBets()) || (actualPlayer == dealerButtonPlayer)) actualPlayer.enableButton(1);
+				if(checkIfBetsZero()) actualPlayer.enableButton(1);
 				//Bet
-				if(checkTurnBets()) actualPlayer.enableButton(2);
+				if(checkIfBetsZero()) actualPlayer.enableButton(2);
 				//Raise
 				if(maxBet > actualPlayer.getActualBet() && actualPlayer.getChips() + actualPlayer.getActualBet() > maxBet) actualPlayer.enableButton(3);
 				//Call
@@ -205,11 +222,11 @@ public class Table
 				if(maxBet > actualPlayer.getActualBet() + actualPlayer.getChips()) actualPlayer.enableButton(6);
 				
 				
-				actualPlayer.setBiddingStatus(maxBet);
+				//actualPlayer.setBiddingStatus(maxBet);
 				//if(actualPlayer.folded) continue;
 				String messageReceived = actualPlayer.playerConnector.receiveMessage();
 				System.out.println("otrzymano: " + messageReceived);
-				actualPlayer.setState(6);
+				actualPlayer.enableButton(7);
 				
 				if(messageReceived.equals("FOLD")){
 					actualPlayer.folded = true;
@@ -240,16 +257,24 @@ public class Table
 					actualPlayer.addToBet(actualPlayer.getChips());
 					actualPlayer.modifyPlayer();
 				}
-				
+				actualPlayer.didMove = true;
+				actualPlayer.modifyPlayer();
 				
 			}
-			while(!checkBets());
+			while(!checkBets() && !allPlayersMoved());
 			
 			for(Player player : PlayersList)
 			{
 				pot += player.getActualBet();
 				player.setActualBet(0);
-				player.playerConnector.sendMessage("Pula wynosi " + pot + " ¿etonów");
+				maxBet = 0;
+				player.didMove = false;
+			}
+			
+			for(Player player : PlayersList)
+			{
+				player.modifyPlayer();
+				player.playerConnector.sendMessage("M:Pula wynosi " + pot + " ¿etonów");
 			}
 			
 			if(turn == 1)
@@ -257,15 +282,18 @@ public class Table
 				tableCards.add(deck.getFromTop());
 				tableCards.add(deck.getFromTop());
 			}
-			tableCards.add(deck.getFromTop());
-			for(Player player : PlayersList)
+			if(turn < 4)
 			{
-				if(turn == 1)
+				tableCards.add(deck.getFromTop());
+				for(Player player : PlayersList)
 				{
-					player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 3));
-					player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 2));;
+					if(turn == 1)
+					{
+						player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 3));
+						player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 2));;
+					}
+					player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 1));
 				}
-				player.playerConnector.sendPlayerCards(tableCards.get(tableCards.size() - 1));
 			}
 			turn++;
 		}

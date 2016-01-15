@@ -133,7 +133,7 @@ public class PlayerConnector implements PlayerConnectorAdapter
 		else sendMessage("M:Gracz " + winningPlayer.getNick() + " wygrywa runde!");
 	}
 
-	public void enableButton(int buttonIndex)
+	public void enableButton(int buttonIndex,  int remainingChips)
 	{
 		sendMessage("B:" + buttonIndex);
 	}

@@ -13,7 +13,7 @@ public class Player
 	private int state;
 	private int turnBet = 0;
 	public PlayerConnector playerConnector;
-	public boolean folded = false, allIn = false;
+	public boolean folded = false, allIn = false, didMove = false;
 	
 	public int getTurnBet()
 	{
@@ -150,7 +150,7 @@ public class Player
 	
 	public void enableButton(int buttonIndex)
 	{
-		playerConnector.enableButton(buttonIndex);
+		playerConnector.enableButton(buttonIndex, Chips);
 	}
 }
 
