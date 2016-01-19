@@ -16,9 +16,9 @@ public class ConnectorWindow extends JFrame {
 	Client client;
 	
 	JTextField adres,port,imie;
-	JLabel Ladres;
-	JLabel Lport;
-	JLabel Limie;
+	JLabel ladres;
+	JLabel lport;
+	JLabel limie;
 	JButton wyslij;
 	
 	ConnectorWindow(Client client, WindowListener listener) {
@@ -30,21 +30,21 @@ public class ConnectorWindow extends JFrame {
 	imie = new JTextField(20);
 	adres = new JTextField("localhost");
 	port = new JTextField("65025");
-	Limie = new JLabel();
-	Ladres = new JLabel();
-	Lport = new JLabel();
+	limie = new JLabel();
+	ladres = new JLabel();
+	lport = new JLabel();
 	wyslij = new JButton("wyslij");
 	wyslij.setActionCommand("connect");
 	
-	Lport.setText(" port:");
-	Ladres.setText(" adres:");
-	Limie.setText(" imię:");
+	lport.setText(" port:");
+	ladres.setText(" adres:");
+	limie.setText(" imię:");
 	
-	add(Limie);
+	add(limie);
 	add(imie);
-	add(Ladres);
+	add(ladres);
 	add(adres);
-	add(Lport);
+	add(lport);
 	add(port);
 	add(wyslij);
 	
