@@ -1,7 +1,9 @@
-package klient;
+package bot;
 
 import java.io.*;
 import java.net.*;
+
+import klient.ErrorWindow;
 
 public class ServerListener extends Thread{
 	
@@ -13,9 +15,9 @@ public class ServerListener extends Thread{
 	String[] mtable;
 	int changed;
 	Game game;
-	Client client;
+	Bot client;
 	
-	ServerListener(String host, int port, Game texas, Client parent) throws IOException, UnknownHostException{
+	ServerListener(String host, int port, Game texas, Bot parent) throws IOException, UnknownHostException{
 		socket = new Socket(host, port);
 		out = new PrintWriter(socket.getOutputStream(), true);
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -58,14 +60,7 @@ public class ServerListener extends Thread{
 				client.gamewin.cards.update();
 			}
 			else if (mtable[0].equals("B")) { //licytacja
-				if(Integer.parseInt(mtable[1]) == 7)
-				{
-					client.gamewin.bet.turnButtonsOff();
-				}
-				else
-				{
-					client.gamewin.bet.turnButtonOn(Integer.parseInt(mtable[1]));
-				}
+				//
 			}
 			else if (mtable[0].equals("E")) { //Błąd wymuszający koniec gry E:[komunikat]
 				if(client.gamewin != null)

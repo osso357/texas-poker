@@ -17,6 +17,24 @@ public class ErrorWindow extends JFrame{
 	JLabel message;
 	JButton ok;
 	
+	public ErrorWindow(String mes, bot.WindowActions listener)
+	{
+		super("Texas Hold'em Error");
+		addWindowListener(listener);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setFont(new Font(Font.SANS_SERIF,Font.PLAIN,40));
+	    setLayout(new FlowLayout(FlowLayout.CENTER));
+		message = new JLabel(mes);
+		add(message);
+		ok = new JButton("OK");
+		ok.setActionCommand("errorWinOK");
+		ok.addActionListener(listener);
+		add(ok);
+		setSize(400,70);
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
+	
 	ErrorWindow(String mes, WindowActions listener)
 	{
 		super("Texas Hold'em Error");
